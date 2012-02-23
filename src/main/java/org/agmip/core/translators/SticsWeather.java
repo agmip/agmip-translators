@@ -12,5 +12,5 @@ public class SticsWeather implements WeatherFile {
   public SticsWeather() {}
   /*public AdvancedHashMap<String, Object> readFile(String fileName) {}*/
   public void readFile(String fileName) {}
-  public void writeFile(String fileName, AdvancedHashMap<String, Object> data);
+  public void writeFile(String fileName, WeatherData data);
 }
