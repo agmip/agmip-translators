@@ -8,16 +8,15 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import org.agmip.core.types.AdvancedHashMap;
+import org.agmip.core.types.weather.WeatherFile;
 
-
-public class AgMIPFileLoader {
+public class AgMIPFileLoader implements WeatherFile{
 	
 	static String WEATHERLOCATIONNAME   = "wsta_name";	
 	static String WEATHERTIMESERIES     = "WeatherDaily";
 	static String WEATHERTIMESERIESDATE = "w_date";
 
 	public AdvancedHashMap<String, Object> readFile(String arg0){	
-		
 		String filename = arg0;
 		
 		AdvancedHashMap<String, Object> result = new AdvancedHashMap<String, Object>();
@@ -124,9 +123,8 @@ public class AgMIPFileLoader {
 		} catch (IOException e) {
 			System.out.println("IO error!");
 		}
-		
-
 		return result;
 	}
-	
+
+  public void writeFile(String fileName, AdvancedHashMap data){}  
 }

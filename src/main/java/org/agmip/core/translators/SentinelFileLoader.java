@@ -15,19 +15,10 @@ import org.agmip.core.types.weather.WeatherData;
 import org.agmip.core.types.weather.WeatherFile;
 
 public class SentinelFileLoader implements WeatherFile {
-	
-	
-	public SentinelFileLoader()
-	{
-	}
-	
-	public ArrayList<AdvancedHashMap<String, Object>> readFile(String arg0){	
-				
+  private List experiments = new ArrayList<AdvancedHashMap<String, Object>>();
+  public AdvancedHashMap<String, Object> readFile(String arg0){	
 		String filename = arg0;
-		
 		ArrayList<AdvancedHashMap<String, Object>> result = new ArrayList<AdvancedHashMap<String, Object>>();
-			
-		
 		try {
 			FileInputStream fstream = new FileInputStream(filename);
 			
@@ -61,22 +52,13 @@ public class SentinelFileLoader implements WeatherFile {
 		} catch (IOException e) {
 			System.out.println("IO error!");
 		}
-		
-		return result;
+    experiments = result;
+		return result.get(0);
 	}
 
+  public void writeFile(String fileName, AdvancedHashMap data){}
 
-	
-	public void readFile(String arg0, WeatherData arg1) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	
-	public void writeFile(String arg0, WeatherData arg1) {
-		// TODO Auto-generated method stub
-		
-	}
-
+  public List<AdvancedHashMap<String, Object>> retrieveAllExperiments() {
+    return experiments;
+  }
 }
