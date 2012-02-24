@@ -1,3 +1,4 @@
+package org.agmip.core.translators;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -65,14 +66,14 @@ public class SentinelFileLoader implements WeatherFile {
 	}
 
 
-	@Override
+	
 	public void readFile(String arg0, WeatherData arg1) {
 		// TODO Auto-generated method stub
 		
 	}
 
 
-	@Override
+	
 	public void writeFile(String arg0, WeatherData arg1) {
 		// TODO Auto-generated method stub
 		

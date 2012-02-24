@@ -1,3 +1,4 @@
+package org.agmip.core.translators;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
@@ -106,14 +107,13 @@ public class AgMIPFileLoader {
 				// get rest of the values;
 				for (int i = 4; i < headers.length; i++) {
 			    	if (i < values.length)
-			    		result.put(headers[i], values[i]);
+			    		daily.put(headers[i], values[i]);
 			    	else 
-			    		result.put(headers[i], null);
+			    		daily.put(headers[i], null);
 			    }
 				
 			    dailyArray.add(daily);
     		}
-			
 			result.put(WEATHERTIMESERIES, dailyArray);
 			
 			//Close the input stream

@@ -1,3 +1,9 @@
-target/*
+.settings/*
+bin/*
+.classpath
 *.swp
-.DS_Store*
+*.jar
+.project
+intermediate_crop*
+pretty_print*
+target/*
