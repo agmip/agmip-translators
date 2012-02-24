@@ -6,3 +6,4 @@ bin/*
 .project
 intermediate_crop*
 pretty_print*
+target/*

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.agmip.core.types.AdvancedHashMap;
@@ -29,7 +30,7 @@ public class InfocropWeather implements WeatherFile {
 	}
 
 	
-	public void writeFile(String arg0,WeatherData weatherData) {
+	public void writeFile(String arg0,AdvancedHashMap<String, Object> result) {
 			JSONAdapter adapter = new JSONAdapter();
 
 		    File file;
@@ -39,38 +40,51 @@ public class InfocropWeather implements WeatherFile {
 		    BufferedWriter br;
 		    String stationName,latitude,longitude,altitude;
 		    int dayCount=0;
-		    double solarRadiance;
+		    float solarRadiance;
 		    Date recordDt =new Date();
 		    GregorianCalendar cal=new GregorianCalendar();
 		    int year=0;
 		    AdvancedHashMap<String, Object> record;
 		    AdvancedHashMap<String, Object> data ;
-		    SimpleDateFormat sd =new SimpleDateFormat("mm/dd/yy");
+		    SimpleDateFormat sd =new SimpleDateFormat("yyyymmdd");
 		    try {
 		//		br.write("");
-		    data= adapter.fromJSON(jsonExample);
+		    data= result;
 		    stationName=data.getOr("wsta_name", "notGiven").toString();
-		    latitude=data.getOr("wsta_lat","0.00").toString();
-		    longitude=data.getOr("wsta_long","0.00").toString();
-		    altitude=data.getOr("elev", "0.00").toString();
-		    System.out.println("--------11111111111111------------");
-		    ArrayList weatherRecords = (ArrayList) data.getOr("weather", new ArrayList());
-		    br=new BufferedWriter(new FileWriter(new File("a.tmp")));
-		    
-		    for(int i=0; i<weatherRecords.size();i++){
-		    	record=adapter.exportRecord((Map) weatherRecords.get(i));
-		    	solarRadiance= new Double(record.getOr("srad", "0.00").toString());
-		    	solarRadiance=solarRadiance*1000;
+		    latitude=data.getOr("lat","0.00").toString();
+		    longitude=data.getOr("long","0.00").toString();
+		    altitude=new Integer(data.getOr("elev", "0.00").toString()).toString();
+		    System.out.println("--------11111111111111------------"+stationName);
+		    if(altitude.indexOf(".")!=-1){
 		    	
+		    	//altitude=altitude.substring(0, altitude.indexOf("."));
+		    	System.out.println("---Substr--"+altitude+"\n");
+		    }
+		    
+		    ArrayList weatherRecords = (ArrayList) data.getOr("WeatherDaily", new ArrayList());
+		    br=new BufferedWriter(new FileWriter(new File("a.tmp")));
+		    System.out.println("--List Size--"+weatherRecords.size());
+		    int i=0;
+		    for(i=0; i<weatherRecords.size();i++){
+		    	record=adapter.exportRecord((Map) weatherRecords.get(i));
+		    	solarRadiance= new Float(record.getOr("srad", "0.00").toString());
+		    	solarRadiance=solarRadiance*1000;
+		    	String sRad=Double.toString(solarRadiance);
+		    	sRad=sRad.substring(0,sRad.indexOf(".")+2);
+		    	String key;
+		    	Iterator<String> ie=record.keySet().iterator();
+		    	while(ie.hasNext()){
+		    		System.out.println("----------232-----"+ie.next());
+		    	}
 		    	recordDt=sd.parse(record.getOr("w_date","1/1/11").toString());
 	    		cal.setTime(recordDt);
 	    		year=cal.get(Calendar.YEAR);
 		    	if(newYearStart)
 		    	{
 		    		altitude=record.getOr("elev", "0.00").toString();
-		    		System.out.println("--------222222222222222222------------");
+		    		///System.out.println("--------222222222222222222------------");
 		    		newYearStart=false;
-		    		file=new File("D:\\YashWorkspace\\"+stationName.substring(0, 4).toUpperCase()+"1."+new String(Integer.toString(year)).substring(1, 4));
+		    		file=new File("D:\\YashWorkspace\\"+stationName.substring(0, 2).toUpperCase()+"BL1."+new String(Integer.toString(year)).substring(1, 4));
 		    		file.createNewFile();
 		    		output=new FileWriter(file);
 		    		br=new BufferedWriter(output);
@@ -96,24 +110,26 @@ public class InfocropWeather implements WeatherFile {
 			    	br.write(latitude+" "+longitude+" "+altitude+" "+"0  0\r\n");
 		    	}
 		    		br. write("1  "+cal.get(Calendar.YEAR)+"  "+(dayCount+1)+"  "+
-		    					solarRadiance+"  "+record.getOr("tmin","")+"  "+
+		    					sRad+"  "+record.getOr("tmin","")+"  "+
 		    					record.getOr("tmax","")+"  "+record.getOr("vprs","0.00")+"  "+
-		    					(new Double(record.getOr("wind","0.00").toString())*1000.00/(24.00*3600.00))+"  "+record.getOr("rain","")+"\r\n");
-		    		System.out.println("--------333333333333333333333------------");
+		    					record.getOr("wind","0.00")+"  "+record.getOr("rain","")+"\r\n");
+		    		//System.out.println("--------333333333333333333333------------");
 		    		dayCount++;
 		    		if(cal.isLeapYear(year)){
 		    			if(dayCount==366){
 		    				newYearStart=true;
 		    				dayCount=0;
+		    				br.close();
 		    			}
 		    		}else
 		    			if(dayCount==365){
 		    				newYearStart=true;
 		    				dayCount=0;
+		    				br.close();
 		    			}
 		    }
 		    br.close();
-		    System.out.println("--------44444444444444444------------");
+		    System.out.println("--------44444444444444444------------"+i);
 //		    System.out.println(data.getOr("wsta_lon", new Double(-99.99)));
 //		    System.out.println(data.getOr("wsta_long", new Double(-99.99)));
 //		    System.out.println((adapter.exportRecord((Map) weatherRecords.get(0))).getOr("w_dae", new Date()));
@@ -126,5 +142,11 @@ public class InfocropWeather implements WeatherFile {
 		    	pe.printStackTrace();
 		    }
 		    }
+
+
+	public void writeFile(String arg0, WeatherData arg1) {
+		// TODO Auto-generated method stub
+		
+	}
 
 };
