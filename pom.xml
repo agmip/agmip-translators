@@ -16,7 +16,7 @@
   <licenses>
     <license>
       <name>BSD License</name>
-      <url>http://www.opensource.org/licenses/bsd-license.php</url>
+      <url>https://raw.github.com/agmip/agmip-translators/master/LICENSE</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -43,8 +43,8 @@
       <name>Yash Rajkumar Jain</name>
     </developer>
     <developer>
-      <email></email>
-      <name></name>
+      <email>anshu.14.28@gmail.com</email>
+      <name>Amita Sharma</name>
     </developer>
   </developers>
 
