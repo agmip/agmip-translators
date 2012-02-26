@@ -4,7 +4,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class AquaCropConverterTest {
-	
 	static AgMIPFileLoader agMIPFileLoader = new AgMIPFileLoader();
 	static AquaCropConverter aquaCropConverter = new AquaCropConverter();
 	
@@ -16,13 +15,8 @@ public class AquaCropConverterTest {
 
 	@Test
 	public void test() {		
-	//	AdvancedHashMap<String,Object> result =
-		//		agMIPFileLoader.readFile("D:\\UserData\\projecten\\AGMIP\\Sentinel\\BDJE0XXX.AgMIP");
-		
-		
-		aquaCropConverter.writeFile("D:\\UserData\\projecten\\AGMIP\\Sentinel\\BDJE0XXX_AquaCrop.tmp", 
-		           agMIPFileLoader.readFile("D:\\UserData\\projecten\\AGMIP\\Sentinel\\BDJE0XXX.AgMIP"));
-		
+    data = agMIPFileLoader.readFile("BDJE0XXX.AgMIP"));
+		aquaCropConverter.writeFile("BDJE0XXX_AquaCrop.tmp", data);
 	}
 
 }
