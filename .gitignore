@@ -7,5 +7,5 @@ bin/*
 intermediate_crop*
 pretty_print*
 target/*
-
+*.tmp
 .DS_Store

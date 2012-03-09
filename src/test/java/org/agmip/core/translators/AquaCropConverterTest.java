@@ -15,7 +15,7 @@ public class AquaCropConverterTest {
 
 	@Test
 	public void test() {		
-    data = agMIPFileLoader.readFile("BDJE0XXX.AgMIP"));
+    AdvancedHashMap data = agMIPFileLoader.readFile("BDJE0XXX.AgMIP");
 		aquaCropConverter.writeFile("BDJE0XXX_AquaCrop.tmp", data);
 	}
 

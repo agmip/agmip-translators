@@ -173,7 +173,7 @@
     <dependency>
       <groupId>org.agmip</groupId>
       <artifactId>agmip-core</artifactId>
-      <version>0.4</version>
+      <version>0.4.1</version>
     </dependency>
     <dependency>
       <groupId>org.agmip</groupId>
