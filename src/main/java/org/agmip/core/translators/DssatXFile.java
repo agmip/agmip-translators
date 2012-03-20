@@ -57,11 +57,40 @@ public class DssatXFile implements WeatherFile {
         BufferedWriter br;                          // output object
         StringBuilder eventPart2;                   // output string for second part of event data
         ArrayList eventRecords;                     // Arraylist for event data holder
-        ArrayList secRecords;                     // Arraylist for section data holder
+        ArrayList secRecords;                       // Arraylist for section data holder
+        int trmnNum;                            // total numbers of treatment in the data holder
+        int cuNum;                              // total numbers of cultivars in the data holder
+        int flNum;                              // total numbers of fields in the data holder
+        int saNum;                              // total numbers of soil analysis in the data holder
+        int icNum;                              // total numbers of initial conditions in the data holder
+        int mpNum;                              // total numbers of plaintings in the data holder
+        int miNum;                              // total numbers of irrigations in the data holder
+        int mfNum;                              // total numbers of fertilizers in the data holder
+        int mrNum;                              // total numbers of residues in the data holder
+        int mcNum;                              // total numbers of chemical in the data holder
+        int mtNum;                              // total numbers of tillage in the data holder
+        int meNum;                              // total numbers of enveronment modification in the data holder
+        int mhNum;                              // total numbers of harvest in the data holder
+        int smNum;                              // total numbers of simulation controll record
+        ArrayList<String> cuArr = new ArrayList<String>();   // array for cultivars record
+        ArrayList<String> flArr = new ArrayList<String>();   // array for fields record
+        ArrayList<String> saArr = new ArrayList<String>();   // array for soil analysis record
+        ArrayList<String> icArr = new ArrayList<String>();   // array for initial conditions record
+        ArrayList<String> mpArr = new ArrayList<String>();   // array for plaintings record
+        ArrayList<String> miArr = new ArrayList<String>();   // array for irrigations record
+        ArrayList<String> mfArr = new ArrayList<String>();   // array for fertilizers record
+        ArrayList<String> mrArr = new ArrayList<String>();   // array for residues record
+        ArrayList<String> mcArr = new ArrayList<String>();   // array for chemical record
+        ArrayList<String> mtArr = new ArrayList<String>();   // array for tillage record
+        ArrayList<String> meArr = new ArrayList<String>();   // array for enveronment modification record
+        ArrayList<String> mhArr = new ArrayList<String>();   // array for harvest record
 //        File file;
 //        FileWriter output;
 
         try {
+            
+            // Set default value for missing data
+            setDefVal(result);
             
             // Initial BufferedWriter
             br = new BufferedWriter(new FileWriter(new File("a.tmp")));
@@ -117,367 +146,412 @@ public class DssatXFile implements WeatherFile {
             br.write("*TREATMENTS                        -------------FACTOR LEVELS------------\r\n");
             br.write("@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM");
             
+            // Get index value for each section // TODO will be add to loop when multiple record come out
+            trmnNum = 1;
+            cuNum = getIdxVal(data.getOr("cul_id", "").toString(), cuArr);
+            flNum = getIdxVal(data.getOr("id_field", "").toString(), flArr);
+            saNum = getIdxVal(data.getOr("sadat", "").toString(), saArr);   //TODO Not sure for using this field
+            icNum = getIdxVal(data.getOr("icpcr", "").toString(), icArr);
+            mpNum = getIdxVal(data.getOr("pdate", "").toString(), mpArr);
+            miNum = getIdxVal(data.getOr("ireff", "").toString(), miArr);   //TODO Not sure for using this field
+            mfNum = getIdxVal(data.getOr("fdate", "").toString(), mfArr);   //TODO Not sure for using this field
+            mrNum = getIdxVal(data.getOr("omdat", "").toString(), mrArr);   //TODO Not sure for using this field
+            mcNum = getIdxVal(data.getOr("cdate", "").toString(), mcArr);   //TODO Not sure for using this field
+            mtNum = getIdxVal(data.getOr("tdate", "").toString(), mtArr);   //TODO Not sure for using this field
+            meNum = getIdxVal(data.getOr("emday", "").toString(), meArr);   //TODO Not sure for using this field
+            mhNum = getIdxVal(data.getOr("haday", "").toString(), mhArr);   //TODO Not sure for using this field
+            smNum = 1;
+            
+            
 //            secRecords = (ArrayList) result.getOr("treatments", new ArrayList());
 //            for (int i = 0; i < secRecords.size(); i++)
             {
 //                data = adapter.exportRecord((Map) secRecords.get(i));
+            
+                // treatment
+                trmnNum++;
+                
+                
                 
                 br.write(String.format("%1$-2d %2$-1d %3$-1d %4$-1d %5$25s %6$-2d %7$-2d %8$-2d %9$-2d %10$-2d %11$-2d %12$-2d %13$-2d %14$-2d %15$-2d %16$-2d %17$-2d %18$-2d\r\n",
-                        data.getOr("trno", defValI).toString(),
+                        trmnNum,
                         data.getOr("sq", defValI).toString(),
                         data.getOr("op", defValI).toString(),
                         data.getOr("co", defValI).toString(),
                         data.getOr("tr_name", defValC).toString(),
-                        data.getOr("ge", defValI).toString(),
-                        data.getOr("fl", defValI).toString(), 
-                        data.getOr("sa", defValI).toString(),
-                        data.getOr("ic", defValI).toString(),
-                        data.getOr("pl", defValI).toString(),
-                        data.getOr("ir", defValI).toString(),
-                        data.getOr("fe", defValI).toString(),
-                        data.getOr("om", defValI).toString(),
-                        data.getOr("ch", defValI).toString(),
-                        data.getOr("ti", defValI).toString(),
-                        data.getOr("em", defValI).toString(),
-                        data.getOr("ha", defValI).toString(),
-                        data.getOr("sm", defValI).toString()));
+                        cuNum, //data.getOr("cu", defValI).toString(), 
+                        flNum, //data.getOr("fl", defValI).toString(), 
+                        saNum, //data.getOr("sa", defValI).toString(),
+                        icNum, //data.getOr("ic", defValI).toString(),
+                        mpNum, //data.getOr("pl", defValI).toString(),
+                        miNum, //data.getOr("ir", defValI).toString(),
+                        mfNum, //data.getOr("fe", defValI).toString(),
+                        mrNum, //data.getOr("om", defValI).toString(),
+                        mcNum, //data.getOr("ch", defValI).toString(),
+                        mtNum, //data.getOr("ti", defValI).toString(),
+                        meNum, //data.getOr("em", defValI).toString(),
+                        mhNum, //data.getOr("ha", defValI).toString(),
+                        smNum)); // 1
             }
             br.write("\r\n");
 
             // CULTIVARS Section
-            br.write("*CULTIVARS\r\n");
-            br.write("@C CR INGENO CNAME\r\n");
-            
-//            secRecords = (ArrayList) result.getOr("cultivars", new ArrayList());
-//            for (int i = 0; i < secRecords.size(); i++)
-            {
-//                data = adapter.exportRecord((Map) secRecords.get(i));
-                br.write(String.format("%1$-2d %2$2s %3$6s %4$16s\r\n",
-                        data.getOr("ge", defValI).toString(),
-                        data.getOr("cr", defValC).toString(),
-                        data.getOr("cul_id", defValC).toString(),
-                        data.getOr("cul_name", defValC).toString()));
+            if (!cuArr.isEmpty()) {
+                br.write("*CULTIVARS\r\n");
+                br.write("@C CR INGENO CNAME\r\n");
 
+    //            secRecords = (ArrayList) result.getOr("cultivars", new ArrayList());
+    //            for (int i = 0; i < secRecords.size(); i++)
+                {
+    //                data = adapter.exportRecord((Map) secRecords.get(i));
+                    br.write(String.format("%1$-2d %2$2s %3$6s %4$16s\r\n",
+                            data.getOr("ge", defValI).toString(),
+                            data.getOr("cr", defValC).toString(),
+                            data.getOr("cul_id", defValC).toString(),
+                            data.getOr("cul_name", defValC).toString()));
+
+                }
             }
             
             // FIELDS Section
-            br.write("*FIELDS\r\n");
-            br.write("@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME\r\n");
-            eventPart2 = new StringBuilder();
-            eventPart2.append("@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR\r\n");
-            
-//            secRecords = (ArrayList) result.getOr("fields", new ArrayList());
-//            for (int i = 0; i < secRecords.size(); i++)
-            {
-//                data = adapter.exportRecord((Map) secRecords.get(i));
-                br.write(String.format("%1$-2d %2$8s %3$8s %4$5s %5$-5.0f %6$5s %7$-5.0f %8$-5.0f %9$5s %10$5s %11$-5.0f %12$10s %13$s\r\n",
-                        data.getOr("fl", defValI).toString(),
-                        data.getOr("id_field", defValC).toString(),
-                        data.getOr("wsta_id", defValC).toString(),
-                        data.getOr("flsl", defValC).toString(),
-                        data.getOr("flob", defValR).toString(),
-                        data.getOr("fl_drntype", defValC).toString(),
-                        data.getOr("fldrd", defValR).toString(),
-                        data.getOr("fldrs", defValR).toString(),
-                        data.getOr("flst", defValC).toString(),
-                        data.getOr("sltx", defValC).toString(),
-                        data.getOr("sldp", defValR).toString(),
-                        data.getOr("soil_id", defValC).toString(),
-                        data.getOr("fl_name", defValC).toString()));
+            if (!flArr.isEmpty()) {
+                br.write("*FIELDS\r\n");
+                br.write("@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME\r\n");
+                eventPart2 = new StringBuilder();
+                eventPart2.append("@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR\r\n");
 
-                eventPart2.append(String.format("%1$-2d %2$-15.2f %3$-15.2f %4$-9s %5$-17s %6$-5s %7$-5s %8$-5s %9$5s %10$-5s\r\n",
-                        data.getOr("fl", defValI).toString(),
-                        data.getOr("fl_lat", defValR).toString(),
-                        data.getOr("fl_long", defValR).toString(),
-                        data.getOr("flele", defValR).toString(),
-                        data.getOr("farea", defValR).toString(),
-                        data.getOr("", defValR).toString(),
-                        data.getOr("fllwr", defValR).toString(),
-                        data.getOr("flsla", defValR).toString(),
-                        data.getOr("flhst", defValC).toString(),
-                        data.getOr("fhdur", defValR).toString()));
+    //            secRecords = (ArrayList) result.getOr("fields", new ArrayList());
+    //            for (int i = 0; i < secRecords.size(); i++)
+                {
+    //                data = adapter.exportRecord((Map) secRecords.get(i));
+                    br.write(String.format("%1$-2d %2$8s %3$8s %4$5s %5$-5.0f %6$5s %7$-5.0f %8$-5.0f %9$5s %10$5s %11$-5.0f %12$10s %13$s\r\n",
+                            data.getOr("fl", defValI).toString(),
+                            data.getOr("id_field", defValC).toString(),
+                            data.getOr("wsta_id", defValC).toString(),
+                            data.getOr("flsl", defValC).toString(),
+                            data.getOr("flob", defValR).toString(),
+                            data.getOr("fl_drntype", defValC).toString(),
+                            data.getOr("fldrd", defValR).toString(),
+                            data.getOr("fldrs", defValR).toString(),
+                            data.getOr("flst", defValC).toString(),
+                            data.getOr("sltx", defValC).toString(),
+                            data.getOr("sldp", defValR).toString(),
+                            data.getOr("soil_id", defValC).toString(),
+                            data.getOr("fl_name", defValC).toString()));
+
+                    eventPart2.append(String.format("%1$-2d %2$-15.2f %3$-15.2f %4$-9s %5$-17s %6$-5s %7$-5s %8$-5s %9$5s %10$-5s\r\n",
+                            data.getOr("fl", defValI).toString(),
+                            data.getOr("fl_lat", defValR).toString(),
+                            data.getOr("fl_long", defValR).toString(),
+                            data.getOr("flele", defValR).toString(),
+                            data.getOr("farea", defValR).toString(),
+                            data.getOr("", defValR).toString(),
+                            data.getOr("fllwr", defValR).toString(),
+                            data.getOr("flsla", defValR).toString(),
+                            data.getOr("flhst", defValC).toString(),
+                            data.getOr("fhdur", defValR).toString()));
+                }
+                br.write(eventPart2.toString() + "\r\n");
             }
-            br.write(eventPart2.toString() + "\r\n");
             
             // SOIL ANALYSIS Section
-            br.write("*SOIL ANALYSIS\r\n");
-            
-//            secRecords = (ArrayList) result.getOr("soil analysis", new ArrayList());
-//            for (int i = 0; i < secRecords.size(); i++)
-            {
-//                data = adapter.exportRecord((Map) secRecords.get(i));
-                
-                br.write("@A SADAT  SMHB  SMPX  SMKE  SANAME\r\n");
-                br.write(String.format("%1$-2d %2$-05d %3$5s %4$5s %5$5s  %6$s\r\n",
-                        data.getOr("sa", defValI).toString(),
-                        formatDateStr(data.getOr("sadat", defValD).toString()),
-                        data.getOr("samhb", defValC).toString(),
-                        data.getOr("sampx", defValC).toString(),
-                        data.getOr("samke", defValC).toString(),
-                        data.getOr("sa_name", defValC).toString()));
-                
-                br.write("@A  SABL  SADM  SAOC  SANI SAPHW SAPHB  SAPX  SAKE  SASC\r\n");
-//                secRecords = (ArrayList) data.getOr("soil analysis levels", new ArrayList());
-//                for (int j = 0; j < secRecords.size(); j++)
+            if (!saArr.isEmpty()) {
+                br.write("*SOIL ANALYSIS\r\n");
+
+    //            secRecords = (ArrayList) result.getOr("soil analysis", new ArrayList());
+    //            for (int i = 0; i < secRecords.size(); i++)
                 {
-//                    data = adapter.exportRecord((Map) secRecords.get(j));
-                    br.write(String.format("%1$-2d %2$-5.0f %3$-5.1f %4$-5.2f %5$-5.2f %6$-5.1f %7$-5.1f %8$-5.1f %9$-5.1f %10$-5.2f\r\n",
+    //                data = adapter.exportRecord((Map) secRecords.get(i));
+
+                    br.write("@A SADAT  SMHB  SMPX  SMKE  SANAME\r\n");
+                    br.write(String.format("%1$-2d %2$-05d %3$5s %4$5s %5$5s  %6$s\r\n",
                             data.getOr("sa", defValI).toString(),
-                            data.getOr("sabl", defValR).toString(),
-                            data.getOr("sabdm", defValR).toString(),
-                            data.getOr("saoc", defValR).toString(),
-                            data.getOr("sani", defValR).toString(),
-                            data.getOr("saphw", defValR).toString(),
-                            data.getOr("saphb", defValR).toString(),
-                            data.getOr("sapx", defValR).toString(),
-                            data.getOr("sake", defValR).toString(),
-                            data.getOr("sasc", defValR).toString()));
+                            formatDateStr(data.getOr("sadat", defValD).toString()),
+                            data.getOr("samhb", defValC).toString(),
+                            data.getOr("sampx", defValC).toString(),
+                            data.getOr("samke", defValC).toString(),
+                            data.getOr("sa_name", defValC).toString()));
+
+                    br.write("@A  SABL  SADM  SAOC  SANI SAPHW SAPHB  SAPX  SAKE  SASC\r\n");
+    //                secRecords = (ArrayList) data.getOr("soil analysis levels", new ArrayList());
+    //                for (int j = 0; j < secRecords.size(); j++)
+                    {
+    //                    data = adapter.exportRecord((Map) secRecords.get(j));
+                        br.write(String.format("%1$-2d %2$-5.0f %3$-5.1f %4$-5.2f %5$-5.2f %6$-5.1f %7$-5.1f %8$-5.1f %9$-5.1f %10$-5.2f\r\n",
+                                data.getOr("sa", defValI).toString(),
+                                data.getOr("sabl", defValR).toString(),
+                                data.getOr("sabdm", defValR).toString(),
+                                data.getOr("saoc", defValR).toString(),
+                                data.getOr("sani", defValR).toString(),
+                                data.getOr("saphw", defValR).toString(),
+                                data.getOr("saphb", defValR).toString(),
+                                data.getOr("sapx", defValR).toString(),
+                                data.getOr("sake", defValR).toString(),
+                                data.getOr("sasc", defValR).toString()));
+                    }
                 }
+                br.write("\r\n");
             }
-            br.write("\r\n");
             
             // INITIAL CONDITIONS Section
-            br.write("*INITIAL CONDITIONS\r\n");
-            
-//            eventRecords = (ArrayList) data.getOr("initial", new ArrayList());
-//            for (int i = 0; i < eventRecords.size(); i++)
-            {
-//                data = adapter.exportRecord((Map) eventRecords.get(i));
-                br.write("@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME\r\n");
-                br.write(String.format("%1$-2d %2$5s %3$-05d %4$-5.0f %5$-5.0f %6$-5.2f %7$-5.2f %8$-5.1f %9$-5s %10$-5.2f %11$-5.2f %12$-5s %13$-5s %14$s\r\n",
-                        data.getOr("ic", defValI).toString(),
-                        data.getOr("icpcr", defValC).toString(),
-                        formatDateStr(data.getOr("icdat", defValD).toString()),
-                        data.getOr("icrt", defValR).toString(),
-                        data.getOr("icnd", defValR).toString(),
-                        data.getOr("icrzno", defValR).toString(),
-                        data.getOr("icrze", defValR).toString(),
-                        data.getOr("icwt", defValR).toString(),
-                        data.getOr("icrag", defValR).toString(),
-                        data.getOr("icrn", defValR).toString(),
-                        data.getOr("icrp", defValR).toString(),
-                        data.getOr("icrip", defValR).toString(),
-                        data.getOr("icrdp", defValR).toString(), 
-                        data.getOr("ic_name", defValC).toString()));
-                
-                br.write("@C  ICBL  SH2O  SNH4  SNO3\r\n");
-//                secRecords = (ArrayList) data.getOr("initial levels", new ArrayList());
-//                for (int j = 0; j < secRecords.size(); j++)
-                {
-//                    data = adapter.exportRecord((Map) secRecords.get(j));
-                    br.write(String.format("%1$-2d %2$-5.0f %3$-5.3f %4$-5s %5$-5.1f\r\n",
-                            data.getOr("ic", defValI).toString(),
-                            data.getOr("icbl", defValR).toString(),
-                            data.getOr("ich2o", defValR).toString(),
-                            data.getOr("icnh4", defValR).toString(),
-                            data.getOr("icno3", defValR).toString()));
+            if (!icArr.isEmpty()) {
+                br.write("*INITIAL CONDITIONS\r\n");
 
+    //            eventRecords = (ArrayList) data.getOr("initial", new ArrayList());
+    //            for (int i = 0; i < eventRecords.size(); i++)
+                {
+    //                data = adapter.exportRecord((Map) eventRecords.get(i));
+                    br.write("@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME\r\n");
+                    br.write(String.format("%1$-2d %2$5s %3$-05d %4$-5.0f %5$-5.0f %6$-5.2f %7$-5.2f %8$-5.1f %9$-5s %10$-5.2f %11$-5.2f %12$-5s %13$-5s %14$s\r\n",
+                            data.getOr("ic", defValI).toString(),
+                            data.getOr("icpcr", defValC).toString(),
+                            formatDateStr(data.getOr("icdat", defValD).toString()),
+                            data.getOr("icrt", defValR).toString(),
+                            data.getOr("icnd", defValR).toString(),
+                            data.getOr("icrzno", defValR).toString(),
+                            data.getOr("icrze", defValR).toString(),
+                            data.getOr("icwt", defValR).toString(),
+                            data.getOr("icrag", defValR).toString(),
+                            data.getOr("icrn", defValR).toString(),
+                            data.getOr("icrp", defValR).toString(),
+                            data.getOr("icrip", defValR).toString(),
+                            data.getOr("icrdp", defValR).toString(), 
+                            data.getOr("ic_name", defValC).toString()));
+
+                    br.write("@C  ICBL  SH2O  SNH4  SNO3\r\n");
+    //                secRecords = (ArrayList) data.getOr("initial levels", new ArrayList());
+    //                for (int j = 0; j < secRecords.size(); j++)
+                    {
+    //                    data = adapter.exportRecord((Map) secRecords.get(j));
+                        br.write(String.format("%1$-2d %2$-5.0f %3$-5.3f %4$-5s %5$-5.1f\r\n",
+                                data.getOr("ic", defValI).toString(),
+                                data.getOr("icbl", defValR).toString(),
+                                data.getOr("ich2o", defValR).toString(),
+                                data.getOr("icnh4", defValR).toString(),
+                                data.getOr("icno3", defValR).toString()));
+
+                    }
                 }
-                br.write(eventPart2.toString());
+                br.write("\r\n");
             }
-            br.write("\r\n");
             
             // PLANTING DETAILS Section
-            br.write("*PLANTING DETAILS\r\n");
-            br.write("@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME\r\n");
-            
-//            eventRecords = (ArrayList) data.getOr("plainting", new ArrayList());
-//            for (int i = 0; i < eventRecords.size(); i++)
-            {
-//                data = adapter.exportRecord((Map) eventRecords.get(i));
-                br.write(String.format("%1$-2d %2$-05d %3$-05d %4$-5.1f %5$-5.1f     %6$1s     %7$1s %8$-5.0f %9$-5.0f %10$-5.1f %11$-5.0f %12$-5.0f %13$-5.1f %14$-5.1f %15$-5.1f                        %16$s\r\n",
-                        data.getOr("pl", defValI).toString(),
-                        formatDateStr(data.getOr("pdate", defValD).toString()),
-                        formatDateStr(data.getOr("pldae", defValD).toString()),
-                        data.getOr("plpop", defValR).toString(),
-                        data.getOr("plpoe", defValR).toString(),
-                        data.getOr("plme", defValC).toString(),
-                        data.getOr("plds", defValC).toString(),
-                        data.getOr("plrs", defValR).toString(),
-                        data.getOr("plrd", defValR).toString(),
-                        data.getOr("pldp", defValR).toString(),
-                        data.getOr("plmwt", defValR).toString(),
-                        data.getOr("page", defValR).toString(),
-                        data.getOr("penv", defValR).toString(),
-                        data.getOr("plph", defValR).toString(),
-                        data.getOr("plspl", defValR).toString(),
-                        data.getOr("pl_name", defValC).toString()));
+            if (!mpArr.isEmpty()) {
+                br.write("*PLANTING DETAILS\r\n");
+                br.write("@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME\r\n");
 
+    //            eventRecords = (ArrayList) data.getOr("plainting", new ArrayList());
+    //            for (int i = 0; i < eventRecords.size(); i++)
+                {
+    //                data = adapter.exportRecord((Map) eventRecords.get(i));
+                    br.write(String.format("%1$-2d %2$-05d %3$-05d %4$-5.1f %5$-5.1f     %6$1s     %7$1s %8$-5.0f %9$-5.0f %10$-5.1f %11$-5.0f %12$-5.0f %13$-5.1f %14$-5.1f %15$-5.1f                        %16$s\r\n",
+                            data.getOr("pl", defValI).toString(),
+                            formatDateStr(data.getOr("pdate", defValD).toString()),
+                            formatDateStr(data.getOr("pldae", defValD).toString()),
+                            data.getOr("plpop", defValR).toString(),
+                            data.getOr("plpoe", defValR).toString(),
+                            data.getOr("plme", defValC).toString(),
+                            data.getOr("plds", defValC).toString(),
+                            data.getOr("plrs", defValR).toString(),
+                            data.getOr("plrd", defValR).toString(),
+                            data.getOr("pldp", defValR).toString(),
+                            data.getOr("plmwt", defValR).toString(),
+                            data.getOr("page", defValR).toString(),
+                            data.getOr("penv", defValR).toString(),
+                            data.getOr("plph", defValR).toString(),
+                            data.getOr("plspl", defValR).toString(),
+                            data.getOr("pl_name", defValC).toString()));
+
+                }
+                br.write("\r\n");
             }
-            br.write("\r\n");
             
             // IRRIGATION AND WATER MANAGEMENT Section
-            br.write("*IRRIGATION AND WATER MANAGEMENT\r\n");
-            
-//            eventRecords = (ArrayList) data.getOr("irrigation", new ArrayList());
-//            for (int i = 0; i < eventRecords.size(); i++)
-            {
-//                data = adapter.exportRecord((Map) eventRecords.get(i));
-                br.write("@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME\r\n");
-                br.write(String.format("%1$-2d %2$-5.2f %3$-5.0f %4$-5.0f %5$-5.0f %6$5s %7$5s %8$-5.0f %9$s\r\n",
-                        data.getOr("ir", defValI).toString(),
-                        data.getOr("ireff", defValR).toString(),
-                        data.getOr("irmdp", defValR).toString(),
-                        data.getOr("irthr", defValR).toString(),
-                        data.getOr("irept", defValR).toString(),
-                        data.getOr("irstg", defValC).toString(),
-                        data.getOr("iame", defValC).toString(),
-                        data.getOr("iamt", defValR).toString(),
-                        data.getOr("ir_name", defValC).toString()));
-                
-                br.write("@I IDATE  IROP IRVAL\r\n");
-//                secRecords = (ArrayList) data.getOr("irrigation levels", new ArrayList());
-//                for (int j = 0; j < secRecords.size(); j++)
+            if (!miArr.isEmpty()) {
+                br.write("*IRRIGATION AND WATER MANAGEMENT\r\n");
+
+    //            eventRecords = (ArrayList) data.getOr("irrigation", new ArrayList());
+    //            for (int i = 0; i < eventRecords.size(); i++)
                 {
-//                    data = adapter.exportRecord((Map) secRecords.get(j));
-                    br.write(String.format("%1$-2d %2$-05d %3$5s %4$-5.0f\r\n",
+    //                data = adapter.exportRecord((Map) eventRecords.get(i));
+                    br.write("@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME\r\n");
+                    br.write(String.format("%1$-2d %2$-5.2f %3$-5.0f %4$-5.0f %5$-5.0f %6$5s %7$5s %8$-5.0f %9$s\r\n",
                             data.getOr("ir", defValI).toString(),
-                            formatDateStr(data.getOr("idate", defValD).toString()),
-                            data.getOr("irop", defValC).toString(),
-                            data.getOr("irval", defValR).toString()));
+                            data.getOr("ireff", defValR).toString(),
+                            data.getOr("irmdp", defValR).toString(),
+                            data.getOr("irthr", defValR).toString(),
+                            data.getOr("irept", defValR).toString(),
+                            data.getOr("irstg", defValC).toString(),
+                            data.getOr("iame", defValC).toString(),
+                            data.getOr("iamt", defValR).toString(),
+                            data.getOr("ir_name", defValC).toString()));
+
+                    br.write("@I IDATE  IROP IRVAL\r\n");
+    //                secRecords = (ArrayList) data.getOr("irrigation levels", new ArrayList());
+    //                for (int j = 0; j < secRecords.size(); j++)
+                    {
+    //                    data = adapter.exportRecord((Map) secRecords.get(j));
+                        br.write(String.format("%1$-2d %2$-05d %3$5s %4$-5.0f\r\n",
+                                data.getOr("ir", defValI).toString(),
+                                formatDateStr(data.getOr("idate", defValD).toString()),
+                                data.getOr("irop", defValC).toString(),
+                                data.getOr("irval", defValR).toString()));
+                    }
                 }
+                br.write("\r\n");
             }
-            br.write("\r\n");
             
             // FERTILIZERS (INORGANIC) Section
-            br.write("*FERTILIZERS (INORGANIC)\r\n");
-            br.write("@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME\r\n");
-//            eventRecords = (ArrayList) data.getOr("fertilizers", new ArrayList());
-//            for (int i = 0; i < eventRecords.size(); i++)
-            {
-//                data = adapter.exportRecord((Map) eventRecords.get(i));
-                br.write(String.format("%1$-2d %2$-05d %3$5s %4$5s %5$-5.0f %6$-5.0f %7$-5.0f %8$-5.0f %9$-5.0f %10$-5.0f %11$5s %12$s\r\n",
-                        data.getOr("fe", defValI).toString(),
-                        formatDateStr(data.getOr("fdate", defValD).toString()),
-                        data.getOr("fecd", defValC).toString(),
-                        data.getOr("feacd", defValC).toString(),
-                        data.getOr("fedep", defValR).toString(),
-                        data.getOr("feamn", defValR).toString(),
-                        data.getOr("feamp", defValR).toString(),
-                        data.getOr("feamk", defValR).toString(),
-                        data.getOr("feamc", defValR).toString(),
-                        data.getOr("feamo", defValR).toString(),
-                        data.getOr("feocd", defValC).toString(),
-                        data.getOr("fe_name", defValC).toString()));
-                
+            if (!mfArr.isEmpty()) {
+                br.write("*FERTILIZERS (INORGANIC)\r\n");
+                br.write("@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME\r\n");
+    //            eventRecords = (ArrayList) data.getOr("fertilizers", new ArrayList());
+    //            for (int i = 0; i < eventRecords.size(); i++)
+                {
+    //                data = adapter.exportRecord((Map) eventRecords.get(i));
+                    br.write(String.format("%1$-2d %2$-05d %3$5s %4$5s %5$-5.0f %6$-5.0f %7$-5.0f %8$-5.0f %9$-5.0f %10$-5.0f %11$5s %12$s\r\n",
+                            data.getOr("fe", defValI).toString(),
+                            formatDateStr(data.getOr("fdate", defValD).toString()),
+                            data.getOr("fecd", defValC).toString(),
+                            data.getOr("feacd", defValC).toString(),
+                            data.getOr("fedep", defValR).toString(),
+                            data.getOr("feamn", defValR).toString(),
+                            data.getOr("feamp", defValR).toString(),
+                            data.getOr("feamk", defValR).toString(),
+                            data.getOr("feamc", defValR).toString(),
+                            data.getOr("feamo", defValR).toString(),
+                            data.getOr("feocd", defValC).toString(),
+                            data.getOr("fe_name", defValC).toString()));
+
+                }
+                br.write("\r\n");
             }
-            br.write("\r\n");
             
             // RESIDUES AND ORGANIC FERTILIZER Section
-            br.write("*RESIDUES AND ORGANIC FERTILIZER\r\n");
-            br.write("@R RDATE  RCOD  RAMT  RESN  RESP  RESK  RINP  RDEP  RMET RENAME\r\n");
-            
-//            eventRecords = (ArrayList) data.getOr("residues", new ArrayList());
-//            for (int i = 0; i < eventRecords.size(); i++)
-            {
-//                data = adapter.exportRecord((Map) eventRecords.get(i));
-                br.write(String.format("%1$-2d %2$-05d %3$5s %4$-5.0f %5$-5.2f %6$-5.2f %7$-5.2f %8$-5.0f %9$-5.0f %10$-5.0f %11$s\r\n",
-                        data.getOr("om", defValI).toString(),
-                        formatDateStr(data.getOr("omdat", defValD).toString()),
-                        data.getOr("omcd", defValC).toString(),
-                        data.getOr("omamt", defValR).toString(),
-                        data.getOr("omnpct", defValR).toString(),
-                        data.getOr("omppct", defValR).toString(),
-                        data.getOr("omkpct", defValR).toString(),
-                        data.getOr("ominp", defValR).toString(),
-                        data.getOr("omdep", defValR).toString(),
-                        data.getOr("omacd", defValR).toString(),
-                        data.getOr("om_name", defValC).toString()));
-                
+            if (!mrArr.isEmpty()) {
+                br.write("*RESIDUES AND ORGANIC FERTILIZER\r\n");
+                br.write("@R RDATE  RCOD  RAMT  RESN  RESP  RESK  RINP  RDEP  RMET RENAME\r\n");
+
+    //            eventRecords = (ArrayList) data.getOr("residues", new ArrayList());
+    //            for (int i = 0; i < eventRecords.size(); i++)
+                {
+    //                data = adapter.exportRecord((Map) eventRecords.get(i));
+                    br.write(String.format("%1$-2d %2$-05d %3$5s %4$-5.0f %5$-5.2f %6$-5.2f %7$-5.2f %8$-5.0f %9$-5.0f %10$-5.0f %11$s\r\n",
+                            data.getOr("om", defValI).toString(),
+                            formatDateStr(data.getOr("omdat", defValD).toString()),
+                            data.getOr("omcd", defValC).toString(),
+                            data.getOr("omamt", defValR).toString(),
+                            data.getOr("omnpct", defValR).toString(),
+                            data.getOr("omppct", defValR).toString(),
+                            data.getOr("omkpct", defValR).toString(),
+                            data.getOr("ominp", defValR).toString(),
+                            data.getOr("omdep", defValR).toString(),
+                            data.getOr("omacd", defValR).toString(),
+                            data.getOr("om_name", defValC).toString()));
+
+                }
+                br.write("\r\n");
             }
-            br.write("\r\n");
             
             // CHEMICAL APPLICATIONS Section
-            br.write("*CHEMICAL APPLICATIONS\r\n");
-            br.write("@C CDATE CHCOD CHAMT  CHME CHDEP   CHT..CHNAME\r\n");
-            
-//            eventRecords = (ArrayList) data.getOr("chemical", new ArrayList());
-//            for (int i = 0; i < eventRecords.size(); i++)
-            {
-//                data = adapter.exportRecord((Map) eventRecords.get(i));
-                br.write(String.format("%1$-2d %2$-05d %3$5s %4$-5.2f %5$5s %6$5s %7$5s  %8$s\r\n",
-                        data.getOr("ch", defValI).toString(),
-                        formatDateStr(data.getOr("cdate", defValD).toString()),
-                        data.getOr("chcd", defValC).toString(),
-                        data.getOr("chamt", defValR).toString(),
-                        data.getOr("chacd", defValC).toString(),
-                        data.getOr("chdep", defValC).toString(),
-                        data.getOr("ch_targets", defValC).toString(),
-                        data.getOr("ch_name", defValC).toString()));
-                
+            if (!mcArr.isEmpty()) {
+                br.write("*CHEMICAL APPLICATIONS\r\n");
+                br.write("@C CDATE CHCOD CHAMT  CHME CHDEP   CHT..CHNAME\r\n");
+
+    //            eventRecords = (ArrayList) data.getOr("chemical", new ArrayList());
+    //            for (int i = 0; i < eventRecords.size(); i++)
+                {
+    //                data = adapter.exportRecord((Map) eventRecords.get(i));
+                    br.write(String.format("%1$-2d %2$-05d %3$5s %4$-5.2f %5$5s %6$5s %7$5s  %8$s\r\n",
+                            data.getOr("ch", defValI).toString(),
+                            formatDateStr(data.getOr("cdate", defValD).toString()),
+                            data.getOr("chcd", defValC).toString(),
+                            data.getOr("chamt", defValR).toString(),
+                            data.getOr("chacd", defValC).toString(),
+                            data.getOr("chdep", defValC).toString(),
+                            data.getOr("ch_targets", defValC).toString(),
+                            data.getOr("ch_name", defValC).toString()));
+
+                }
+                br.write("\r\n");
             }
-            br.write("\r\n");
             
             // TILLAGE Section
-            br.write("*TILLAGE\r\n");
-            br.write("@T TDATE TIMPL  TDEP TNAME\r\n");
-            
-//            eventRecords = (ArrayList) data.getOr("tillage", new ArrayList());
-//            for (int i = 0; i < eventRecords.size(); i++)
-            {
-//                data = adapter.exportRecord((Map) eventRecords.get(i));
-                br.write(String.format("%1$-2d %2$-05d %3$5s %4$-5.0f %5$s\r\n",
-                        data.getOr("ti", defValI).toString(),
-                        formatDateStr(data.getOr("tdate", defValD).toString()),
-                        data.getOr("tiimp", defValC).toString(),
-                        data.getOr("tidep", defValR).toString(),
-                        data.getOr("ti_name", defValC).toString()));
-                
+            if (!mtArr.isEmpty()) {
+                br.write("*TILLAGE\r\n");
+                br.write("@T TDATE TIMPL  TDEP TNAME\r\n");
+
+    //            eventRecords = (ArrayList) data.getOr("tillage", new ArrayList());
+    //            for (int i = 0; i < eventRecords.size(); i++)
+                {
+    //                data = adapter.exportRecord((Map) eventRecords.get(i));
+                    br.write(String.format("%1$-2d %2$-05d %3$5s %4$-5.0f %5$s\r\n",
+                            data.getOr("ti", defValI).toString(),
+                            formatDateStr(data.getOr("tdate", defValD).toString()),
+                            data.getOr("tiimp", defValC).toString(),
+                            data.getOr("tidep", defValR).toString(),
+                            data.getOr("ti_name", defValC).toString()));
+
+                }
+                br.write("\r\n");
             }
-            br.write("\r\n");
             
             // ENVIRONMENT MODIFICATIONS Section
-            br.write("*ENVIRONMENT MODIFICATIONS\r\n");
-            br.write("@E ODATE EDAY  ERAD  EMAX  EMIN  ERAIN ECO2  EDEW  EWIND ENVNAME\r\n");
-            
-//            eventRecords = (ArrayList) data.getOr("environment", new ArrayList());
-//            for (int i = 0; i < eventRecords.size(); i++)
-            {
-//                data = adapter.exportRecord((Map) eventRecords.get(i));
-                br.write(String.format("%1$-2d %2$-05d %3$1s%4$-4.1f %5$1s%6$-4.1f %7$1s%8$-4.1f %9$1s%10$-4.1f %11$1s%12$-4.1f %13$1s%14$-4.0f %15$1s%16$-4.1f %17$1s%18$-4.1f %19$s\r\n",
-                        data.getOr("em", defValI).toString(),
-                        formatDateStr(data.getOr("emday", defValD).toString()),
-                        data.getOr("ecdyl", defValC).toString(),
-                        data.getOr("emdyl", defValR).toString(),
-                        data.getOr("ecrad", defValC).toString(),
-                        data.getOr("emrad", defValR).toString(),
-                        data.getOr("ecmax", defValC).toString(),
-                        data.getOr("emmax", defValR).toString(),
-                        data.getOr("ecmin", defValC).toString(),
-                        data.getOr("emmin", defValR).toString(),
-                        data.getOr("ecrai", defValC).toString(),
-                        data.getOr("emrai", defValR).toString(),
-                        data.getOr("ecco2", defValC).toString(),
-                        data.getOr("emco2", defValR).toString(),
-                        data.getOr("ecdew", defValC).toString(),
-                        data.getOr("emdew", defValR).toString(),
-                        data.getOr("ecwnd", defValC).toString(),
-                        data.getOr("emwnd", defValR).toString(),
-                        data.getOr("em_name", defValC).toString()));
-                
+            if (!meArr.isEmpty()) {
+                br.write("*ENVIRONMENT MODIFICATIONS\r\n");
+                br.write("@E ODATE EDAY  ERAD  EMAX  EMIN  ERAIN ECO2  EDEW  EWIND ENVNAME\r\n");
+
+    //            eventRecords = (ArrayList) data.getOr("environment", new ArrayList());
+    //            for (int i = 0; i < eventRecords.size(); i++)
+                {
+    //                data = adapter.exportRecord((Map) eventRecords.get(i));
+                    br.write(String.format("%1$-2d %2$-05d %3$1s%4$-4.1f %5$1s%6$-4.1f %7$1s%8$-4.1f %9$1s%10$-4.1f %11$1s%12$-4.1f %13$1s%14$-4.0f %15$1s%16$-4.1f %17$1s%18$-4.1f %19$s\r\n",
+                            data.getOr("em", defValI).toString(),
+                            formatDateStr(data.getOr("emday", defValD).toString()),
+                            data.getOr("ecdyl", defValC).toString(),
+                            data.getOr("emdyl", defValR).toString(),
+                            data.getOr("ecrad", defValC).toString(),
+                            data.getOr("emrad", defValR).toString(),
+                            data.getOr("ecmax", defValC).toString(),
+                            data.getOr("emmax", defValR).toString(),
+                            data.getOr("ecmin", defValC).toString(),
+                            data.getOr("emmin", defValR).toString(),
+                            data.getOr("ecrai", defValC).toString(),
+                            data.getOr("emrai", defValR).toString(),
+                            data.getOr("ecco2", defValC).toString(),
+                            data.getOr("emco2", defValR).toString(),
+                            data.getOr("ecdew", defValC).toString(),
+                            data.getOr("emdew", defValR).toString(),
+                            data.getOr("ecwnd", defValC).toString(),
+                            data.getOr("emwnd", defValR).toString(),
+                            data.getOr("em_name", defValC).toString()));
+
+                }
+                br.write("\r\n");
             }
-            br.write("\r\n");
             
             // HARVEST DETAILS Section
-            br.write("*HARVEST DETAILS\r\n");
-            br.write("@H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME\r\n");
-            
-//            eventRecords = (ArrayList) data.getOr("harvest", new ArrayList());
-//            for (int i = 0; i < eventRecords.size(); i++)
-            {
-//                data = adapter.exportRecord((Map) eventRecords.get(i));
-                br.write(String.format("%1$-2d %2$-05d %3$5s %4$5s %5$5s %6$-5.0f %7$-5.0f %8$s\r\n",
-                        data.getOr("ha", defValI).toString(),
-                        formatDateStr(data.getOr("haday", defValD).toString()),
-                        data.getOr("hastg", defValC).toString(),
-                        data.getOr("hacom", defValC).toString(),
-                        data.getOr("hasiz", defValC).toString(),
-                        data.getOr("hapc", defValR).toString(),
-                        data.getOr("habpc", defValR).toString(),
-                        data.getOr("ha_name", defValC).toString()));
-                
+            if (!mhArr.isEmpty()) {
+                br.write("*HARVEST DETAILS\r\n");
+                br.write("@H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME\r\n");
+
+    //            eventRecords = (ArrayList) data.getOr("harvest", new ArrayList());
+    //            for (int i = 0; i < eventRecords.size(); i++)
+                {
+    //                data = adapter.exportRecord((Map) eventRecords.get(i));
+                    br.write(String.format("%1$-2d %2$-05d %3$5s %4$5s %5$5s %6$-5.0f %7$-5.0f %8$s\r\n",
+                            data.getOr("ha", defValI).toString(),
+                            formatDateStr(data.getOr("haday", defValD).toString()),
+                            data.getOr("hastg", defValC).toString(),
+                            data.getOr("hacom", defValC).toString(),
+                            data.getOr("hasiz", defValC).toString(),
+                            data.getOr("hapc", defValR).toString(),
+                            data.getOr("habpc", defValR).toString(),
+                            data.getOr("ha_name", defValC).toString()));
+
+                }
+                br.write("\r\n");
             }
-            br.write("\r\n");
             
             // SIMULATION CONTROLS and AUTOMATIC MANAGEMENT Section
             br.write(createSMMAStr(0));
@@ -537,27 +611,75 @@ public class DssatXFile implements WeatherFile {
     }
 
     /**
-     * Translate data str from "mm/dd/yy" to "yyddd"
+     * Translate data str from "yyyymmdd" to "yyddd"
+     * 
+     * 2012/3/19    change input format from "yy/mm/dd" to "yyyymmdd"
      * 
      * @author Meng Zhang
-     * @version 1.0
-     * @param str  date string with format of "mm/dd/yy"
-     * @param result date string with format of "yyddd" 
+     * @version 1.1
+     * @param str  date string with format of "yyyymmdd"
+     * @return result date string with format of "yyddd" 
      */
     private String formatDateStr(String str) {
 
         // Initial Calendar object
         Calendar cal = Calendar.getInstance();
-        // break input data string
-        String[] strs = str.split("/");
+        str = str.replaceAll("/", "");
         try {
             // Set date with input value
-            cal.set(Integer.valueOf(strs[2]), Integer.valueOf(strs[0]), Integer.valueOf(strs[1]));
+            cal.set(Integer.valueOf(str.substring(0,4)), Integer.valueOf(str.substring(4,6)), Integer.valueOf(str.substring(6)));
             // translatet to yyddd format
             return String.format("%1$02d%2$03d", cal.get(Calendar.YEAR), cal.get(Calendar.DAY_OF_YEAR));
         } catch (Exception e) {
             // if tranlate failed, then use default value for date
             return defValD;
         }
+    }
+    
+    /**
+     * Set default value for missing data
+     * 
+     * @author Meng Zhang
+     * @version 1.0
+     * @param result  date holder for experiment data
+     */
+    private void setDefVal(AdvancedHashMap result) {
+
+        if (!result.getOr("icdat", "").toString().equals("")) {
+            defValD = result.getOr("icdat", "").toString();
+        } else if (!result.getOr("sdat", "").toString().equals("")) {
+            defValD = result.getOr("sdat", "").toString();
+        } else  if (!result.getOr("pdate", "").toString().equals("")) {
+            defValD = result.getOr("pdate", "").toString();
+        } else {
+            //throw new Exception("Experiment can't be output due to unavailable date info.");
+            defValD = "1/1/11";
+        }
+        defValR = "-99.0";
+        defValC = "";
+        defValI = "-99";
+    }
+    
+    /**
+     * Get index value of the record and set new id value in the array
+     * 
+     * @author Meng Zhang
+     * @version 1.0
+     * @param idVal  id string for the record
+     * @param arr    array of the id
+     * @return       current index value of the id
+     */
+    private int getIdxVal(String idStr, ArrayList arr) {
+
+        int ret = 0;
+        if (!idStr.equals("")) {
+            ret = arr.indexOf(idStr);
+            if (ret == -1) {
+                arr.add(idStr);
+                ret = arr.size();
+            }
+        }
+        
+        return ret;
     }
 }

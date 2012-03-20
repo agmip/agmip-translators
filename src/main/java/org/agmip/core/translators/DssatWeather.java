@@ -61,6 +61,9 @@ public class DssatWeather implements WeatherFile {
 
         try {
             
+            // Set default value for missing data
+            setDefVal(result);
+            
             // Get Data from input holder
             data = result;
             ArrayList weatherRecords = (ArrayList) data.getOr("WeatherDaily", new ArrayList());
@@ -109,27 +112,52 @@ public class DssatWeather implements WeatherFile {
     }
 
     /**
-     * Translate data str from "mm/dd/yy" to "yyddd"
+     * Translate data str from "yyyymmdd" to "yyddd"
+     * 
+     * 2012/3/19    change input format from "yy/mm/dd" to "yyyymmdd"
      * 
      * @author Meng Zhang
-     * @version 1.0
-     * @param str  date string with format of "mm/dd/yy"
-     * @param result date string with format of "yyddd" 
+     * @version 1.1
+     * @param str  date string with format of "yyyymmdd"
+     * @return result date string with format of "yyddd" 
      */
     private String formatDateStr(String str) {
 
         // Initial Calendar object
         Calendar cal = Calendar.getInstance();
-        // break input data string
-        String[] strs = str.split("/");
+        str = str.replaceAll("/", "");
         try {
             // Set date with input value
-            cal.set(Integer.valueOf(strs[2]), Integer.valueOf(strs[0]), Integer.valueOf(strs[1]));
+            cal.set(Integer.valueOf(str.substring(0,4)), Integer.valueOf(str.substring(4,6)), Integer.valueOf(str.substring(6)));
             // translatet to yyddd format
             return String.format("%1$02d%2$03d", cal.get(Calendar.YEAR), cal.get(Calendar.DAY_OF_YEAR));
         } catch (Exception e) {
             // if tranlate failed, then use default value for date
             return defValD;
         }
+    }
+    
+    /**
+     * Set default value for missing data
+     * 
+     * @author Meng Zhang
+     * @version 1.0
+     * @param result  date holder for experiment data
+     */
+    private void setDefVal(AdvancedHashMap result) {
+
+        if (!result.getOr("icdat", "").toString().equals("")) {
+            defValD = result.getOr("icdat", "").toString();
+        } else if (!result.getOr("sdat", "").toString().equals("")) {
+            defValD = result.getOr("sdat", "").toString();
+        } else  if (!result.getOr("pdate", "").toString().equals("")) {
+            defValD = result.getOr("pdate", "").toString();
+        } else {
+            //throw new Exception("Experiment can't be output due to unavailable date info.");
+            defValD = "1/1/11";
+        }
+        defValR = "-99.0";
+        defValC = "";
+        defValI = "-99";
     }
 }
