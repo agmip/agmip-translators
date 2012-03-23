@@ -26,6 +26,9 @@ public class DssatWeather implements WeatherFile {
     private static String defValC = "";
     private static String defValI = "0";
     private static String defValD = "1/1/11";
+    
+    // Define necessary id for the experiment data
+    private static String[] necessaryData = {"pdate", "plpop,plpoe", "plrs", "cr", "cul_id", "wsta_id", "soil_id"};
 
     /**
      * DSSAT Weather Data Input method
@@ -62,7 +65,23 @@ public class DssatWeather implements WeatherFile {
         try {
             
             // Set default value for missing data
-            setDefVal(result);
+            setDefVal();
+            
+            // Initial missing data check for necessary fields
+            for (int i = 0; i < necessaryData.length; i++) {
+                String[] strs = necessaryData[i].split(",");
+                for (int j = 0; j < strs.length; j++) {
+                    if (!result.getOr(strs[j], "").equals("")) {
+                        strs = null;
+                        break;
+                    }
+                }
+                if (strs != null) {
+                    //throw new Exception("Incompleted record because missing data : [" + necessaryData[i] + "]");
+                    System.out.println("Incompleted record because missing data : [" + necessaryData[i] + "]");
+                    return;
+                }
+            }
             
             // Get Data from input holder
             data = result;
@@ -92,7 +111,9 @@ public class DssatWeather implements WeatherFile {
             for (int i = 0; i < weatherRecords.size(); i++) {
 
                 record = adapter.exportRecord((Map) weatherRecords.get(i));
-                br.write(String.format("%1$-5d %2$-5.1f %3$-5.1f %4$-5.1f %5$-5.1f %6$-5.1f %7$-5.1f %8$-5.1f\r\n",
+                // if date is missing, jump the record
+                if (!record.getOr("w_date", "").toString().equals("")) {
+                    br.write(String.format("%1$-5d %2$-5.1f %3$-5.1f %4$-5.1f %5$-5.1f %6$-5.1f %7$-5.1f %8$-5.1f\r\n",
                         formatDateStr(record.getOr("w_date", defValD).toString()),
                         record.getOr("srad", defValR).toString(),
                         record.getOr("tmax", defValR).toString(),
@@ -101,6 +122,10 @@ public class DssatWeather implements WeatherFile {
                         record.getOr("tdew", defValR).toString(),
                         record.getOr("wind", defValR).toString(),
                         record.getOr("pard", defValR).toString()));
+                } else {
+                    // TODO Throw exception here
+                    System.out.println("A daily record has the missing date in it.");
+                }
             }
 
             // Output finish
@@ -142,20 +167,10 @@ public class DssatWeather implements WeatherFile {
      * 
      * @author Meng Zhang
      * @version 1.0
-     * @param result  date holder for experiment data
      */
-    private void setDefVal(AdvancedHashMap result) {
+    private void setDefVal() {
 
-        if (!result.getOr("icdat", "").toString().equals("")) {
-            defValD = result.getOr("icdat", "").toString();
-        } else if (!result.getOr("sdat", "").toString().equals("")) {
-            defValD = result.getOr("sdat", "").toString();
-        } else  if (!result.getOr("pdate", "").toString().equals("")) {
-            defValD = result.getOr("pdate", "").toString();
-        } else {
-            //throw new Exception("Experiment can't be output due to unavailable date info.");
-            defValD = "1/1/11";
-        }
+        // defValD = ""; No need to set default value for Date type in weather file
         defValR = "-99.0";
         defValC = "";
         defValI = "-99";

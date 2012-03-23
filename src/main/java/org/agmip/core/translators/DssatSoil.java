@@ -25,6 +25,9 @@ public class DssatSoil implements WeatherFile {
     private static String defValC = "";
     private static String defValI = "0";
     private static String defValD = "1/1/11";
+    
+    // Define necessary id for the experiment data
+    private static String[] necessaryData = {"pdate", "plpop,plpoe", "plrs", "cr", "cul_id", "wsta_id", "soil_id"};
 
     /**
      * DSSAT Soil Data Input method
@@ -60,6 +63,22 @@ public class DssatSoil implements WeatherFile {
 //        FileWriter output;
 
         try {
+            
+            // Initial missing data check for necessary fields
+            for (int i = 0; i < necessaryData.length; i++) {
+                String[] strs = necessaryData[i].split(",");
+                for (int j = 0; j < strs.length; j++) {
+                    if (!result.getOr(strs[j], "").equals("")) {
+                        strs = null;
+                        break;
+                    }
+                }
+                if (strs != null) {
+                    //throw new Exception("Incompleted record because missing data : [" + necessaryData[i] + "]");
+                    System.out.println("Incompleted record because missing data : [" + necessaryData[i] + "]");
+                    return;
+                }
+            }
             
             // Set default value for missing data
             setDefVal(result);
