@@ -7,6 +7,8 @@ import java.io.BufferedWriter;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
 import org.agmip.core.types.*;
 import org.agmip.core.types.weather.*;
 import org.agmip.util.JSONAdapter;
@@ -26,9 +28,6 @@ public class DssatWeather implements WeatherFile {
     private static String defValC = "";
     private static String defValI = "0";
     private static String defValD = "1/1/11";
-    
-    // Define necessary id for the experiment data
-    private static String[] necessaryData = {"pdate", "plpop,plpoe", "plrs", "cr", "cul_id", "wsta_id", "soil_id"};
 
     /**
      * DSSAT Weather Data Input method
@@ -59,6 +58,13 @@ public class DssatWeather implements WeatherFile {
         AdvancedHashMap<String, Object> record;     // Data holder for daily data
         AdvancedHashMap<String, Object> data;       // Data holder for whole weather data
         BufferedWriter br;                          // output object
+        //String[] optDailyId = {"tdew", "wind", "pard"};            // Define optional daily data fields
+        HashMap optDaily = new HashMap();
+        optDaily.put("tdew", "  DEWP");
+        optDaily.put("wind", "  WIND");
+        optDaily.put("pard", "   PAR");
+        Set<String> optDailyIds = optDaily.keySet();
+        //StringBuilder optDailyTitle = new StringBuilder();
 //        File file;
 //        FileWriter output;
 
@@ -66,22 +72,6 @@ public class DssatWeather implements WeatherFile {
             
             // Set default value for missing data
             setDefVal();
-            
-            // Initial missing data check for necessary fields
-            for (int i = 0; i < necessaryData.length; i++) {
-                String[] strs = necessaryData[i].split(",");
-                for (int j = 0; j < strs.length; j++) {
-                    if (!result.getOr(strs[j], "").equals("")) {
-                        strs = null;
-                        break;
-                    }
-                }
-                if (strs != null) {
-                    //throw new Exception("Incompleted record because missing data : [" + necessaryData[i] + "]");
-                    System.out.println("Incompleted record because missing data : [" + necessaryData[i] + "]");
-                    return;
-                }
-            }
             
             // Get Data from input holder
             data = result;
@@ -92,11 +82,11 @@ public class DssatWeather implements WeatherFile {
 
             // Output Weather File
             // Titel Section
-            br.write(String.format(" %1$60s\r\n", data.getOr("wst_name", defValC).toString()));
+            br.write(String.format(" %1$-60s\r\n", data.getOr("wst_name", defValC).toString()));
 
             // Weather Station Section
             br.write("@ INSI      LAT     LONG  ELEV   TAV   AMP REFHT WNDHT\r\n");
-            br.write(String.format("  %1$-4s %2$-8.3f %3$-8.3f %4$-5.0f %5$-5.1f %6$-5.1f %7$-5.1f %8$-5.1f\r\n",
+            br.write(String.format("  %1$-4s %2$8s %3$8s %4$5s %5$5s %6$5s %7$5s %8$5s\r\n",
                     data.getOr("wst_insi", defValC).toString(),
                     data.getOr("wst_lat", defValR).toString(),
                     data.getOr("wst_long", defValR).toString(),
@@ -107,21 +97,39 @@ public class DssatWeather implements WeatherFile {
                     data.getOr("wndht", defValR).toString()));
 
             // Daily weather data section
-            br.write("@DATE  SRAD  TMAX  TMIN  RAIN  DEWP  WIND   PAR\r\n");
+            // Fixed Title
+            br.write("@DATE  SRAD  TMAX  TMIN  RAIN");
+            
+            // Optional Title
+            for (String optDailyId : optDailyIds) {
+                // check which optional data is exist, if not, remove from map
+                if (!data.getOr(optDailyId, "").toString().equals("")) {
+                    br.write(optDaily.get(optDailyId).toString());
+                } else {
+                    optDaily.remove(optDailyId);
+                }
+            }
+            br.write("\r\n");
+            optDailyIds = optDaily.keySet();
+            
             for (int i = 0; i < weatherRecords.size(); i++) {
 
                 record = adapter.exportRecord((Map) weatherRecords.get(i));
                 // if date is missing, jump the record
                 if (!record.getOr("w_date", "").toString().equals("")) {
-                    br.write(String.format("%1$-5d %2$-5.1f %3$-5.1f %4$-5.1f %5$-5.1f %6$-5.1f %7$-5.1f %8$-5.1f\r\n",
+                    // Fixed data part
+                    br.write(String.format("%1$5s %2$5s %3$5s %4$5s %5$5s",
                         formatDateStr(record.getOr("w_date", defValD).toString()),
                         record.getOr("srad", defValR).toString(),
                         record.getOr("tmax", defValR).toString(),
                         record.getOr("tmin", defValR).toString(),
-                        record.getOr("rain", defValR).toString(),
-                        record.getOr("tdew", defValR).toString(),
-                        record.getOr("wind", defValR).toString(),
-                        record.getOr("pard", defValR).toString()));
+                        record.getOr("rain", defValR).toString()));
+                    
+                    // Optional data part
+                    for (String optDailyId : optDailyIds) {
+                        br.write(String.format(" %1$5s", record.getOr(optDailyId, defValR).toString()));
+                    }
+                    br.write("\r\n");
                 } else {
                     // TODO Throw exception here
                     System.out.println("A daily record has the missing date in it.");
