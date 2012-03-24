@@ -117,20 +117,20 @@ public class DssatXFile implements WeatherFile {
 
             // Output XFile
             // EXP.DETAILS Section
-            br.write(String.format("*EXP.DETAILS: %1$10s %2$60s\r\n", result.getOr("exname", defValC).toString(), result.getOr("local_name", defValC).toString()));
+            br.write(String.format("*EXP.DETAILS: %1$-10s %2$-60s\r\n", result.getOr("exname", defValC).toString(), result.getOr("local_name", defValC).toString()));
 
             // GENERAL Section
             br.write("*GENERAL\r\n");
             // People
-            br.write(String.format("@PEOPLE\r\n %1$75s\r\n", result.getOr("people", defValC).toString()));
+            br.write(String.format("@PEOPLE\r\n %1$-75s\r\n", result.getOr("people", defValC).toString()));
             // Address
-            br.write(String.format("@ADDRESS\r\n %1$75s\r\n", result.getOr("address", defValC).toString()));
+            br.write(String.format("@ADDRESS\r\n %1$-75s\r\n", result.getOr("address", defValC).toString()));
             // Site
-            br.write(String.format("@SITE\r\n %1$75s\r\n", result.getOr("site", defValC).toString()));
+            br.write(String.format("@SITE\r\n %1$-75s\r\n", result.getOr("site", defValC).toString()));
             // Plot Info
             if (result.containsKey("plot_info")) {
                 br.write("@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........\r\n");
-                br.write(String.format(" %1$-6.1f %2$-5d %3$-5.1f %4$-5d %5$-5d %6$5s %7$-5.1f %8$-5d %9$-5.1f %10$15s\r\n",
+                br.write(String.format(" %1$6s %2$5s %3$5s %4$5s %5$5s %6$-5s %7$5s %8$5s %9$5s %10$-15s\r\n",
                         result.getOr("parea", defValR).toString(),
                         result.getOr("prno", defValI).toString(),
                         result.getOr("plen", defValR).toString(),
@@ -148,7 +148,7 @@ public class DssatXFile implements WeatherFile {
                 
                 // If notes contain newline code, then write directly
                 if (notes.indexOf("\r") >= 0 || notes.indexOf("\n") >= 0 ) {
-                    br.write(String.format(" %1$75s\r\n", result.getOr("notes", defValC).toString()));
+                    br.write(String.format(" %1$-75s\r\n", result.getOr("notes", defValC).toString()));
                 }
                 // Otherwise, add newline for every 75-bits charactors
                 else {
@@ -188,11 +188,7 @@ public class DssatXFile implements WeatherFile {
 //                data = adapter.exportRecord((Map) secRecords.get(i));
             
                 // treatment
-                trmnNum++;
-                
-                
-                
-                br.write(String.format("%1$-2d %2$-1d %3$-1d %4$-1d %5$25s %6$-2d %7$-2d %8$-2d %9$-2d %10$-2d %11$-2d %12$-2d %13$-2d %14$-2d %15$-2d %16$-2d %17$-2d %18$-2d\r\n",
+                br.write(String.format("%1$2s %2$1s %3$1s %4$1s %5$-25s %6$2s %7$2s %8$2s %9$2s %10$2s %11$2s %12$2s %13$2s %14$2s %15$2s %16$2s %17$2s %18$2s\r\n",
                         trmnNum,
                         data.getOr("sq", defValI).toString(),
                         data.getOr("op", defValI).toString(),
@@ -211,6 +207,7 @@ public class DssatXFile implements WeatherFile {
                         meNum, //data.getOr("em", defValI).toString(),
                         mhNum, //data.getOr("ha", defValI).toString(),
                         smNum)); // 1
+                trmnNum++;
             }
             br.write("\r\n");
 
@@ -224,7 +221,7 @@ public class DssatXFile implements WeatherFile {
     //            for (int i = 0; i < secRecords.size(); i++)
                 {
     //                data = adapter.exportRecord((Map) secRecords.get(i));
-                    br.write(String.format("%1$-2d %2$2s %3$6s %4$16s\r\n",
+                    br.write(String.format("%1$2s %2$-2s %3$-6s %4$-16s\r\n",
                             idx+1, //data.getOr("ge", defValI).toString(),
                             data.getOr("cr", defValC).toString(),
                             data.getOr("cul_id", defValC).toString(),
@@ -245,7 +242,7 @@ public class DssatXFile implements WeatherFile {
     //            for (int i = 0; i < secRecords.size(); i++)
                 {
     //                data = adapter.exportRecord((Map) secRecords.get(i));
-                    br.write(String.format("%1$-2d %2$8s %3$8s %4$5s %5$-5.0f %6$5s %7$-5.0f %8$-5.0f %9$5s %10$5s %11$-5.0f %12$10s %13$s\r\n",
+                    br.write(String.format("%1$2s %2$-8s %3$-8s %4$-5s %5$5s %6$-5s %7$5s %8$5s %9$-5s %10$-5s %11$5s %12$-10s %13$-s\r\n",
                             idx+1, //data.getOr("fl", defValI).toString(),
                             data.getOr("id_field", defValC).toString(),
                             data.getOr("wsta_id", defValC).toString(),
@@ -260,7 +257,7 @@ public class DssatXFile implements WeatherFile {
                             data.getOr("soil_id", defValC).toString(),
                             data.getOr("fl_name", defValC).toString()));
 
-                    eventPart2.append(String.format("%1$-2d %2$-15.2f %3$-15.2f %4$-9s %5$-17s %6$-5s %7$-5s %8$-5s %9$5s %10$-5s\r\n",
+                    eventPart2.append(String.format("%1$2s %2$15s %3$15s %4$9s %5$17s %6$5s %7$5s %8$5s %9$-5s %10$5s\r\n",
                             idx+1, //data.getOr("fl", defValI).toString(),
                             data.getOr("fl_lat", defValR).toString(),
                             data.getOr("fl_long", defValR).toString(),
@@ -286,7 +283,7 @@ public class DssatXFile implements WeatherFile {
     //                data = adapter.exportRecord((Map) secRecords.get(i));
 
                     br.write("@A SADAT  SMHB  SMPX  SMKE  SANAME\r\n");
-                    br.write(String.format("%1$-2d %2$-05d %3$5s %4$5s %5$5s  %6$s\r\n",
+                    br.write(String.format("%1$2s %2$05s %3$-5s %4$-5s %5$-5s  %6$-s\r\n",
                             idx+1, //data.getOr("sa", defValI).toString(),
                             formatDateStr(data.getOr("sadat", defValD).toString()),
                             data.getOr("samhb", defValC).toString(),
@@ -299,7 +296,7 @@ public class DssatXFile implements WeatherFile {
     //                for (int j = 0; j < secRecords.size(); j++)
                     {
     //                    data = adapter.exportRecord((Map) secRecords.get(j));
-                        br.write(String.format("%1$-2d %2$-5.0f %3$-5.1f %4$-5.2f %5$-5.2f %6$-5.1f %7$-5.1f %8$-5.1f %9$-5.1f %10$-5.2f\r\n",
+                        br.write(String.format("%1$2s %2$5s %3$5s %4$5s %5$5s %6$5s %7$5s %8$5s %9$5s %10$5s\r\n",
                                 idx+1, //data.getOr("sa", defValI).toString(),
                                 data.getOr("sabl", defValR).toString(),
                                 data.getOr("sabdm", defValR).toString(),
@@ -325,7 +322,7 @@ public class DssatXFile implements WeatherFile {
                 {
     //                data = adapter.exportRecord((Map) eventRecords.get(i));
                     br.write("@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME\r\n");
-                    br.write(String.format("%1$-2d %2$5s %3$-05d %4$-5.0f %5$-5.0f %6$-5.2f %7$-5.2f %8$-5.1f %9$-5s %10$-5.2f %11$-5.2f %12$-5s %13$-5s %14$s\r\n",
+                    br.write(String.format("%1$2s %2$-5s %3$05s %4$5s %5$5s %6$5s %7$5s %8$5s %9$5s %10$5s %11$5s %12$5s %13$5s %14$-s\r\n",
                             idx+1, //data.getOr("ic", defValI).toString(),
                             data.getOr("icpcr", defValC).toString(),
                             formatDateStr(data.getOr("icdat", defValD).toString()),
@@ -346,7 +343,7 @@ public class DssatXFile implements WeatherFile {
     //                for (int j = 0; j < secRecords.size(); j++)
                     {
     //                    data = adapter.exportRecord((Map) secRecords.get(j));
-                        br.write(String.format("%1$-2d %2$-5.0f %3$-5.3f %4$-5s %5$-5.1f\r\n",
+                        br.write(String.format("%1$2s %2$5s %3$5s %4$5s %5$5s\r\n",
                                 idx+1, //data.getOr("ic", defValI).toString(),
                                 data.getOr("icbl", defValR).toString(),
                                 data.getOr("ich2o", defValR).toString(),
@@ -368,7 +365,7 @@ public class DssatXFile implements WeatherFile {
     //            for (int i = 0; i < eventRecords.size(); i++)
                 {
     //                data = adapter.exportRecord((Map) eventRecords.get(i));
-                    br.write(String.format("%1$-2d %2$-05d %3$-05d %4$-5.1f %5$-5.1f     %6$1s     %7$1s %8$-5.0f %9$-5.0f %10$-5.1f %11$-5.0f %12$-5.0f %13$-5.1f %14$-5.1f %15$-5.1f                        %16$s\r\n",
+                    br.write(String.format("%1$2s %2$05s %3$05s %4$5s %5$5s     %6$-1s     %7$-1s %8$5s %9$5s %10$5s %11$5s %12$5s %13$5s %14$5s %15$5s                        %16$-s\r\n",
                             idx+1, //data.getOr("pl", defValI).toString(),
                             formatDateStr(data.getOr("pdate", defValD).toString()),
                             formatDateStr(data.getOr("pldae", defValD).toString()),
@@ -400,7 +397,7 @@ public class DssatXFile implements WeatherFile {
                 {
     //                data = adapter.exportRecord((Map) eventRecords.get(i));
                     br.write("@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME\r\n");
-                    br.write(String.format("%1$-2d %2$-5.2f %3$-5.0f %4$-5.0f %5$-5.0f %6$5s %7$5s %8$-5.0f %9$s\r\n",
+                    br.write(String.format("%1$2s %2$5s %3$5s %4$5s %5$5s %6$-5s %7$-5s %8$5s %9$-s\r\n",
                             idx+1, //data.getOr("ir", defValI).toString(),
                             data.getOr("ireff", defValR).toString(),
                             data.getOr("irmdp", defValR).toString(),
@@ -416,7 +413,7 @@ public class DssatXFile implements WeatherFile {
     //                for (int j = 0; j < secRecords.size(); j++)
                     {
     //                    data = adapter.exportRecord((Map) secRecords.get(j));
-                        br.write(String.format("%1$-2d %2$-05d %3$5s %4$-5.0f\r\n",
+                        br.write(String.format("%1$2s %2$05s %3$-5s %4$5s\r\n",
                                 idx+1, //data.getOr("ir", defValI).toString(),
                                 formatDateStr(data.getOr("idate", defValD).toString()),
                                 data.getOr("irop", defValC).toString(),
@@ -435,7 +432,7 @@ public class DssatXFile implements WeatherFile {
     //            for (int i = 0; i < eventRecords.size(); i++)
                 {
     //                data = adapter.exportRecord((Map) eventRecords.get(i));
-                    br.write(String.format("%1$-2d %2$-05d %3$5s %4$5s %5$-5.0f %6$-5.0f %7$-5.0f %8$-5.0f %9$-5.0f %10$-5.0f %11$5s %12$s\r\n",
+                    br.write(String.format("%1$2s %2$05s %3$-5s %4$-5s %5$5s %6$5s %7$5s %8$5s %9$5s %10$5s %11$-5s %12$-s\r\n",
                             idx+1, //data.getOr("fe", defValI).toString(),
                             formatDateStr(data.getOr("fdate", defValD).toString()),
                             data.getOr("fecd", defValC).toString(),
@@ -463,7 +460,7 @@ public class DssatXFile implements WeatherFile {
     //            for (int i = 0; i < eventRecords.size(); i++)
                 {
     //                data = adapter.exportRecord((Map) eventRecords.get(i));
-                    br.write(String.format("%1$-2d %2$-05d %3$5s %4$-5.0f %5$-5.2f %6$-5.2f %7$-5.2f %8$-5.0f %9$-5.0f %10$-5.0f %11$s\r\n",
+                    br.write(String.format("%1$2s %2$05s %3$-5s %4$5s %5$5s %6$5s %7$5s %8$5s %9$5s %10$5s %11$-s\r\n",
                             idx+1, //data.getOr("om", defValI).toString(),
                             formatDateStr(data.getOr("omdat", defValD).toString()),
                             data.getOr("omcd", defValC).toString(),
@@ -490,7 +487,7 @@ public class DssatXFile implements WeatherFile {
     //            for (int i = 0; i < eventRecords.size(); i++)
                 {
     //                data = adapter.exportRecord((Map) eventRecords.get(i));
-                    br.write(String.format("%1$-2d %2$-05d %3$5s %4$-5.2f %5$5s %6$5s %7$5s  %8$s\r\n",
+                    br.write(String.format("%1$2s %2$05s %3$-5s %4$5s %5$-5s %6$-5s %7$-5s  %8$-s\r\n",
                             idx+1, //data.getOr("ch", defValI).toString(),
                             formatDateStr(data.getOr("cdate", defValD).toString()),
                             data.getOr("chcd", defValC).toString(),
@@ -514,7 +511,7 @@ public class DssatXFile implements WeatherFile {
     //            for (int i = 0; i < eventRecords.size(); i++)
                 {
     //                data = adapter.exportRecord((Map) eventRecords.get(i));
-                    br.write(String.format("%1$-2d %2$-05d %3$5s %4$-5.0f %5$s\r\n",
+                    br.write(String.format("%1$2s %2$05s %3$-5s %4$5s %5$-s\r\n",
                             idx+1, //data.getOr("ti", defValI).toString(),
                             formatDateStr(data.getOr("tdate", defValD).toString()),
                             data.getOr("tiimp", defValC).toString(),
@@ -535,7 +532,7 @@ public class DssatXFile implements WeatherFile {
     //            for (int i = 0; i < eventRecords.size(); i++)
                 {
     //                data = adapter.exportRecord((Map) eventRecords.get(i));
-                    br.write(String.format("%1$-2d %2$-05d %3$1s%4$-4.1f %5$1s%6$-4.1f %7$1s%8$-4.1f %9$1s%10$-4.1f %11$1s%12$-4.1f %13$1s%14$-4.0f %15$1s%16$-4.1f %17$1s%18$-4.1f %19$s\r\n",
+                    br.write(String.format("%1$2s %2$05s %3$-1s%4$4s %5$-1s%6$4s %7$-1s%8$4s %9$-1s%10$4s %11$-1s%12$4s %13$-1s%14$4s %15$-1s%16$4s %17$-1s%18$4s %19$-s\r\n",
                             idx+1, //data.getOr("em", defValI).toString(),
                             formatDateStr(data.getOr("emday", defValD).toString()),
                             data.getOr("ecdyl", defValC).toString(),
@@ -570,7 +567,7 @@ public class DssatXFile implements WeatherFile {
     //            for (int i = 0; i < eventRecords.size(); i++)
                 {
     //                data = adapter.exportRecord((Map) eventRecords.get(i));
-                    br.write(String.format("%1$-2d %2$-05d %3$5s %4$5s %5$5s %6$-5.0f %7$-5.0f %8$s\r\n",
+                    br.write(String.format("%1$2s %2$05s %3$-5s %4$-5s %5$-5s %6$5s %7$5s %8$-s\r\n",
                             idx+1, //data.getOr("ha", defValI).toString(),
                             formatDateStr(data.getOr("haday", defValD).toString()),
                             data.getOr("hastg", defValC).toString(),
