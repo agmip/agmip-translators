@@ -25,9 +25,6 @@ public class DssatSoil implements WeatherFile {
     private static String defValC = "";
     private static String defValI = "0";
     private static String defValD = "1/1/11";
-    
-    // Define necessary id for the experiment data
-    private static String[] necessaryData = {"pdate", "plpop,plpoe", "plrs", "cr", "cul_id", "wsta_id", "soil_id"};
 
     /**
      * DSSAT Soil Data Input method
@@ -64,22 +61,6 @@ public class DssatSoil implements WeatherFile {
 
         try {
             
-            // Initial missing data check for necessary fields
-            for (int i = 0; i < necessaryData.length; i++) {
-                String[] strs = necessaryData[i].split(",");
-                for (int j = 0; j < strs.length; j++) {
-                    if (!result.getOr(strs[j], "").equals("")) {
-                        strs = null;
-                        break;
-                    }
-                }
-                if (strs != null) {
-                    //throw new Exception("Incompleted record because missing data : [" + necessaryData[i] + "]");
-                    System.out.println("Incompleted record because missing data : [" + necessaryData[i] + "]");
-                    return;
-                }
-            }
-            
             // Set default value for missing data
             setDefVal(result);
             
@@ -99,19 +80,30 @@ public class DssatSoil implements WeatherFile {
                 data = result;
                 
                 // Site Info Section
-                br.write(String.format(" %1$10s  %2$11s %3$5s %4$-5.0f %5$50s\r\n",
+                br.write(String.format("*%1$-10s  %2$-11s %3$-5s %4$5s %5$-50s\r\n",
                         data.getOr("soil_id", defValC).toString(),
                         data.getOr("sl_source", defValC).toString(),
                         data.getOr("sltx", defValC).toString(),
                         data.getOr("sldp", defValR).toString(),
                         data.getOr("classification", defValC).toString()));
                 br.write("@SITE        COUNTRY          LAT     LONG SCS FAMILY\r\n");
-                br.write(String.format(" %1$23s %2$-8.3f %3$-8.3f %4$50s\r\n",
+                br.write(String.format(" %1$-23s %2$8s %3$8s %4$-50s\r\n",
                         data.getOr("site", defValC).toString(),
                         data.getOr("soillat", defValR).toString(),
                         data.getOr("soillong", defValR).toString(),
                         data.getOr("name", defValC).toString()));
-
+                br.write("@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE\r\n");
+                br.write(String.format(" %1$-5s %2$5s %3$5s %4$5s %5$5s %6$5s %7$5s %8$-5s %9$-5s %10$-5s\r\n",
+                        data.getOr("scom", defValC).toString(),
+                        data.getOr("salb", defValR).toString(),
+                        data.getOr("slu1", defValR).toString(),
+                        data.getOr("sldr", defValR).toString(),
+                        data.getOr("slro", defValR).toString(),
+                        data.getOr("slnf", defValR).toString(),
+                        data.getOr("slpf", defValR).toString(),
+                        data.getOr("smhb", defValC).toString(),
+                        data.getOr("smpx", defValC).toString(),
+                        data.getOr("smke", defValC).toString()));
 
                 // Soil Layer data section
                 ArrayList soilRecords = (ArrayList) data.getOr("SoilLayer", new ArrayList());
@@ -126,7 +118,7 @@ public class DssatSoil implements WeatherFile {
 
                     record = adapter.exportRecord((Map) soilRecords.get(j));
                     // part one
-                    br.write(String.format(" %1$-5.0f %2$5s %3$-5.3f %4$-5.3f %5$-5.3f %6$-5.2f %7$-5.1f %8$-5.2f %9$-5.2f %10$-5.1f %11$-5.1f %12$-5.1f %13$-5.2f %14$-5.1f %15$-5.1f %16$-5.1f %17$-5.1f\r\n",
+                    br.write(String.format(" %1$5s %2$-5s %3$5s %4$5s %5$5s %6$5s %7$5s %8$5s %9$5s %10$5s %11$5s %12$5s %13$5s %14$5s %15$5s %16$5s %17$5s\r\n",
                             data.getOr("sllb", defValR).toString(),
                             data.getOr("slmh", defValC).toString(),
                             data.getOr("slll", defValR).toString(),
@@ -146,7 +138,7 @@ public class DssatSoil implements WeatherFile {
                             data.getOr("sadc", defValR).toString()));
 
                     // part two
-                    sbLyrP2.append(String.format(" %1$-5.0f %2$-5.1f %3$-5.1f %4$-5.1f %5$-5.1f %6$-5.1f %7$-5.1f %8$-5.1f %9$-5.1f %10$-5.1f %11$-5.1f %12$-5.1f %13$-5.1f %14$-5.1f %15$-5.1f %16$-5.1f %17$-5.1f\r\n",
+                    sbLyrP2.append(String.format(" %1$5s %2$5s %3$5s %4$5s %5$5s %6$5s %7$5s %8$5s %9$5s %10$5s %11$5s %12$5s %13$5s %14$5s %15$5s %16$5s %17$5s\r\n",
                             data.getOr("sllb", defValR).toString(),
                             data.getOr("slpx", defValR).toString(),
                             data.getOr("slpt", defValR).toString(),
