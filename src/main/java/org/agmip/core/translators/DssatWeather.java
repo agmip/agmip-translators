@@ -78,7 +78,13 @@ public class DssatWeather implements WeatherFile {
             ArrayList weatherRecords = (ArrayList) data.getOr("WeatherDaily", new ArrayList());
             
             // Initial BufferedWriter
-            br = new BufferedWriter(new FileWriter(new File("a.tmp")));
+            String fileName = data.getOr("wsta_insi", "").toString();
+            if (fileName.equals("")) {
+                fileName = "a.tmp";
+            } else {
+                fileName += data.getOr("w_date", "00").toString().substring(0, 2) + "01.WTH";
+            }
+            br = new BufferedWriter(new FileWriter(new File(fileName)));
 
             // Output Weather File
             // Titel Section
