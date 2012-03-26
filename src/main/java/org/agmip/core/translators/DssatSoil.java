@@ -65,7 +65,13 @@ public class DssatSoil implements WeatherFile {
             setDefVal(result);
             
             // Initial BufferedWriter
-            br = new BufferedWriter(new FileWriter(new File("a.tmp")));
+            String fileName = result.getOr("soil_id", "").toString();
+            if (fileName.equals("")) {
+                fileName = "soil.SOL";
+            } else {
+                fileName = fileName.substring(0, 2) + ".SOL";
+            }
+            br = new BufferedWriter(new FileWriter(new File(fileName)));
 
             // Output Soil File
             // Titel Section
