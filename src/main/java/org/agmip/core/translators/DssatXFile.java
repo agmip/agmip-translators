@@ -112,7 +112,11 @@ public class DssatXFile implements WeatherFile {
             setDefVal(result);
             
             // Initial BufferedWriter
-            br = new BufferedWriter(new FileWriter(new File("a.tmp")));
+            String fileName = result.getOr("exname", "").toString();
+            if (fileName.equals("")) {
+                fileName = "a.tmp";
+            }
+            br = new BufferedWriter(new FileWriter(new File(fileName)));
             data = result;
 
             // Output XFile
