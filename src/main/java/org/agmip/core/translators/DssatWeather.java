@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Set;
 import org.agmip.core.types.*;
 import org.agmip.core.types.weather.*;
@@ -27,7 +28,7 @@ public class DssatWeather implements WeatherFile {
     private static String defValR = "0.00";
     private static String defValC = "";
     private static String defValI = "0";
-    private static String defValD = "1/1/11";
+    private static String defValD = "20110101";
 
     /**
      * DSSAT Weather Data Input method
@@ -57,13 +58,13 @@ public class DssatWeather implements WeatherFile {
         JSONAdapter adapter = new JSONAdapter();    // JSON Adapter
         AdvancedHashMap<String, Object> record;     // Data holder for daily data
         AdvancedHashMap<String, Object> data;       // Data holder for whole weather data
-        BufferedWriter br;                          // output object
+        BufferedWriter br = null;                    // output object
         //String[] optDailyId = {"tdew", "wind", "pard"};            // Define optional daily data fields
         HashMap optDaily = new HashMap();
         optDaily.put("tdew", "  DEWP");
         optDaily.put("wind", "  WIND");
         optDaily.put("pard", "   PAR");
-        Set<String> optDailyIds = optDaily.keySet();
+        Set optDailyIds = optDaily.keySet();
         //StringBuilder optDailyTitle = new StringBuilder();
 //        File file;
 //        FileWriter output;
@@ -76,6 +77,7 @@ public class DssatWeather implements WeatherFile {
             // Get Data from input holder
             data = result;
             ArrayList weatherRecords = (ArrayList) data.getOr("WeatherDaily", new ArrayList());
+            System.out.println(weatherRecords);
             
             // Initial BufferedWriter
             String fileName = data.getOr("wsta_insi", "").toString();
@@ -88,12 +90,12 @@ public class DssatWeather implements WeatherFile {
 
             // Output Weather File
             // Titel Section
-            br.write(String.format(" %1$-60s\r\n", data.getOr("wst_name", defValC).toString()));
+            br.write(String.format("*WEATHER DATA : %1$-60s\r\n\r\n", data.getOr("wst_name", defValC).toString()));
 
             // Weather Station Section
             br.write("@ INSI      LAT     LONG  ELEV   TAV   AMP REFHT WNDHT\r\n");
             br.write(String.format("  %1$-4s %2$8s %3$8s %4$5s %5$5s %6$5s %7$5s %8$5s\r\n",
-                    data.getOr("wst_insi", defValC).toString(),
+                    data.getOr("wst_insi", defValC).toString(), // wsta_insi??
                     data.getOr("wst_lat", defValR).toString(),
                     data.getOr("wst_long", defValR).toString(),
                     data.getOr("elev", defValR).toString(),
@@ -107,16 +109,16 @@ public class DssatWeather implements WeatherFile {
             br.write("@DATE  SRAD  TMAX  TMIN  RAIN");
             
             // Optional Title
-            for (String optDailyId : optDailyIds) {
+            for (Object optDailyId : optDailyIds) {
                 // check which optional data is exist, if not, remove from map
-                if (!data.getOr(optDailyId, "").toString().equals("")) {
+                if (!data.getOr(optDailyId.toString(), "").toString().equals("")) {
                     br.write(optDaily.get(optDailyId).toString());
                 } else {
-                    optDaily.remove(optDailyId);
+                    optDaily.put(optDailyId.toString(), null);
                 }
             }
+            
             br.write("\r\n");
-            optDailyIds = optDaily.keySet();
             
             for (int i = 0; i < weatherRecords.size(); i++) {
 
@@ -132,8 +134,10 @@ public class DssatWeather implements WeatherFile {
                         record.getOr("rain", defValR).toString()));
                     
                     // Optional data part
-                    for (String optDailyId : optDailyIds) {
-                        br.write(String.format(" %1$5s", record.getOr(optDailyId, defValR).toString()));
+                    for (Object optDailyId : optDailyIds) {
+                        if (optDaily.get(optDailyId) != null) {
+                            br.write(String.format(" %1$5s", record.getOr(optDailyId.toString(), defValR).toString()));
+                        }
                     }
                     br.write("\r\n");
                 } else {
@@ -167,12 +171,12 @@ public class DssatWeather implements WeatherFile {
         str = str.replaceAll("/", "");
         try {
             // Set date with input value
-            cal.set(Integer.valueOf(str.substring(0,4)), Integer.valueOf(str.substring(4,6)), Integer.valueOf(str.substring(6)));
+            cal.set(Integer.valueOf(str.substring(0,4)), Integer.valueOf(str.substring(4,6))-1, Integer.valueOf(str.substring(6)));
             // translatet to yyddd format
-            return String.format("%1$02d%2$03d", cal.get(Calendar.YEAR), cal.get(Calendar.DAY_OF_YEAR));
+            return String.format("%1$02d%2$03d", cal.get(Calendar.YEAR)%100, cal.get(Calendar.DAY_OF_YEAR));
         } catch (Exception e) {
             // if tranlate failed, then use default value for date
-            return defValD;
+            return formatDateStr(defValD);
         }
     }
     
