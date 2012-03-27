@@ -25,7 +25,7 @@ public class DssatXFile implements WeatherFile {
     private static String defValR = "0.00";
     private static String defValC = "";
     private static String defValI = "0";
-    private static String defValD = "1/1/11";
+    private static String defValD = "20110101";
     
     // Define necessary id for the experiment data
     private static String[] necessaryData = {"pdate", "plpop,plpoe", "plrs", "cr", "cul_id", "wsta_id", "soil_id"};
@@ -679,12 +679,12 @@ public class DssatXFile implements WeatherFile {
         str = str.replaceAll("/", "");
         try {
             // Set date with input value
-            cal.set(Integer.valueOf(str.substring(0,4)), Integer.valueOf(str.substring(4,6)), Integer.valueOf(str.substring(6)));
+            cal.set(Integer.valueOf(str.substring(0,4)), Integer.valueOf(str.substring(4,6))-1, Integer.valueOf(str.substring(6)));
             // translatet to yyddd format
-            return String.format("%1$02d%2$03d", cal.get(Calendar.YEAR), cal.get(Calendar.DAY_OF_YEAR));
+            return String.format("%1$02d%2$03d", cal.get(Calendar.YEAR)%100, cal.get(Calendar.DAY_OF_YEAR));
         } catch (Exception e) {
             // if tranlate failed, then use default value for date
-            return defValD;
+            return formatDateStr(defValD);
         }
     }
     
@@ -706,7 +706,7 @@ public class DssatXFile implements WeatherFile {
             defValD = result.getOr("pdate", "").toString();
         } else {
             //throw new Exception("Experiment can't be output due to unavailable date info.");
-            defValD = "1/1/11";
+            defValD = "20110101";
         }
         defValR = "-99.0";
         defValC = "";
