@@ -30,16 +30,5 @@ public class DssatWeatherTest {
         JSONAdapter j = new JSONAdapter();
         AdvancedHashMap<String, Object> result = j.fromJSON(jsonExample);
         obDssatWeather.writeFile("", result);
-
-            
-//        System.out.println(j.toJSON(result));
-//
-//        AdvancedHashMap<String, Object> result = new AdvancedHashMap<String, Object>();
-//        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-//        Date date = dateFormat.parse("2012/03/20");
-//        System.out.println(dateFormat.format(date));
-//
-//        adate.put("date", date);
-//        System.out.println(j.toJSON(adate));
     }
 }
