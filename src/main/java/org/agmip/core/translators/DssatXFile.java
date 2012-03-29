@@ -87,6 +87,7 @@ public class DssatXFile implements WeatherFile {
         ArrayList<String> mtArr = new ArrayList<String>();   // array for tillage record
         ArrayList<String> meArr = new ArrayList<String>();   // array for enveronment modification record
         ArrayList<String> mhArr = new ArrayList<String>();   // array for harvest record
+        String exName;
 //        File file;
 //        FileWriter output;
 
@@ -112,16 +113,19 @@ public class DssatXFile implements WeatherFile {
             setDefVal(result);
             
             // Initial BufferedWriter
-            String fileName = result.getOr("exname", "").toString();
+            exName = getExName(result);
+            String fileName = exName;
             if (fileName.equals("")) {
                 fileName = "a.tmp";
+            } else {
+                fileName = fileName.substring(0, fileName.length()-2) + "." + fileName.substring(fileName.length()-2) + "X";
             }
             br = new BufferedWriter(new FileWriter(new File(fileName)));
             data = result;
 
             // Output XFile
             // EXP.DETAILS Section
-            br.write(String.format("*EXP.DETAILS: %1$-10s %2$-60s\r\n", result.getOr("exname", defValC).toString(), result.getOr("local_name", defValC).toString()));
+            br.write(String.format("*EXP.DETAILS: %1$-10s %2$-60s\r\n", exName, result.getOr("local_name", defValC).toString()));
 
             // GENERAL Section
             br.write("*GENERAL\r\n");
@@ -182,7 +186,7 @@ public class DssatXFile implements WeatherFile {
             mcNum = getIdxVal(data.getOr("cdate", "").toString(), mcArr);   //TODO Not sure for using this field
             mtNum = getIdxVal(data.getOr("tdate", "").toString(), mtArr);   //TODO Not sure for using this field
             meNum = getIdxVal(data.getOr("emday", "").toString(), meArr);   //TODO Not sure for using this field
-            mhNum = getIdxVal(data.getOr("haday", "").toString(), mhArr);   //TODO Not sure for using this field
+            mhNum = getIdxVal(data.getOr("hdate", "").toString(), mhArr);   //TODO Not sure for using this field
             smNum = 1;
             
             
@@ -586,7 +590,7 @@ public class DssatXFile implements WeatherFile {
     //                data = adapter.exportRecord((Map) eventRecords.get(i));
                     br.write(String.format("%1$2s %2$5s %3$-5s %4$-5s %5$-5s %6$5s %7$5s %8$s\r\n",
                             idx+1, //data.getOr("ha", defValI).toString(),
-                            formatDateStr(data.getOr("haday", defValD).toString()), // TODO id change to hdate?
+                            formatDateStr(data.getOr("hdate", defValD).toString()),
                             data.getOr("hastg", defValC).toString(),
                             data.getOr("hacom", defValC).toString(),
                             data.getOr("hasiz", defValC).toString(),
@@ -705,9 +709,6 @@ public class DssatXFile implements WeatherFile {
         } catch (Exception e) {
             // if tranlate failed, then use default value for date
             return formatDateStr(defValD);
-//            System.out.println(e.toString());
-//            System.out.println(str);
-//            return "NG"; //TODO
         }
     }
     
@@ -753,6 +754,24 @@ public class DssatXFile implements WeatherFile {
                 arr.add(idStr);
                 ret = arr.size();
             }
+        }
+        
+        return ret;
+    }
+    
+    /**
+     * Get exname with normal format
+     * 
+     * @author Meng Zhang
+     * @version 1.0
+     * @param result  date holder for experiment data
+     * @return       exname
+     */
+    private String getExName(AdvancedHashMap result) {
+
+        String ret = result.getOr("exname", "").toString();
+        if (ret.contains(".")) {
+            ret = ret.substring(0, ret.length()-1).replace(".", "");
         }
         
         return ret;
