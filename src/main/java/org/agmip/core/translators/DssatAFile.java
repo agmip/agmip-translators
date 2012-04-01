@@ -84,8 +84,6 @@ public class DssatAFile implements WeatherFile {
                 observeRecords = new ArrayList();
                 observeRecords.add(result.getOr("observed", new AdvancedHashMap()));
             }
-            
-            System.out.println(observeRecords);
 
             // Initial BufferedWriter
             String exName = getExName(result);
@@ -121,7 +119,6 @@ public class DssatAFile implements WeatherFile {
 
             // Observation Data Section
             Object[] titleOutputId = titleOutput.keySet().toArray();
-            System.out.println(titleOutputId.length);
             for (int i = 0; i < (titleOutputId.length / 40 + titleOutputId.length % 40 == 0 ? 0 : 1); i++) {
 
                 br.write("@TRNO ");
@@ -136,7 +133,11 @@ public class DssatAFile implements WeatherFile {
                     record = adapter.exportRecord((Map) observeRecords.get(j));
                     br.write(String.format(" %1$5d", trno));
                     for (int k = i * 40; k < limit; k++) {
-                        br.write(String.format("%1$6s", record.getOr(titleOutputId[k].toString(), defValR).toString())); //TODO Need to confirm output format for over long data
+                        if (titleOutputId[k].toString().equals("adap") || titleOutputId[k].toString().equals("mdap")) {
+                            br.write(String.format("%1$6s", formatDateStr(result.getOr("pdate", defValI).toString(), record.getOr(titleOutputId[k].toString(), defValI).toString())));
+                        } else {
+                            br.write(String.format("%1$6s", record.getOr(titleOutputId[k].toString(), defValR).toString())); //TODO Need to confirm output format for over long data
+                        }
                     }
                     br.write("\r\n");
                 }
@@ -181,5 +182,50 @@ public class DssatAFile implements WeatherFile {
         }
 
         return ret;
+    }
+
+    /**
+     * Translate data str from "yyyymmdd" to "yyddd"
+     * 
+     * 2012/3/19    change input format from "yy/mm/dd" to "yyyymmdd"
+     * 
+     * @author Meng Zhang
+     * @version 1.1
+     * @param str  date string with format of "yyyymmdd"
+     * @return result date string with format of "yyddd" 
+     */
+    private String formatDateStr(String str) {
+
+        return formatDateStr(str, "0");
+    }
+
+    /**
+     * Translate data str from "yyyymmdd" to "yyddd" plus days you want
+     * 
+     * 
+     * @author Meng Zhang
+     * @version 1.0
+     * @param startDate  date string with format of "yyyymmdd"
+     * @param strDays   the number of days need to be added on
+     * @return result date string with format of "yyddd" 
+     */
+    private String formatDateStr(String startDate, String strDays) {
+
+        // Initial Calendar object
+        Calendar cal = Calendar.getInstance();
+        int days = 0;
+        startDate = startDate.replaceAll("/", "");
+        try {
+            days = Double.valueOf(strDays).intValue();
+            // Set date with input value
+            cal.set(Integer.valueOf(startDate.substring(0, 4)), Integer.valueOf(startDate.substring(4, 6)) - 1, Integer.valueOf(startDate.substring(6)));
+            cal.add(Calendar.DATE, days);
+            // translatet to yyddd format
+            return String.format("%1$02d%2$03d", cal.get(Calendar.YEAR) % 100, cal.get(Calendar.DAY_OF_YEAR));
+        } catch (Exception e) {
+            // if tranlate failed, then use default value for date
+            return "-99"; //formatDateStr(defValD);
+        }
+
     }
 }
