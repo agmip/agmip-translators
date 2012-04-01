@@ -59,10 +59,14 @@ public class DssatAFile implements WeatherFile {
         AdvancedHashMap<String, Object> data;       // Data holder for whole Observation data
         BufferedWriter br = null;                   // output object
         HashMap titleList = new HashMap();          // Define necessary observation data fields
-        titleList.put("hwah", "  HWAM");    //TODO
-        titleList.put("mdap", "  MDAT");    //TODO
-        titleList.put("adap", "  ADAT");    //TODO
+        titleList.put("hwam", "  HWAM");    //TODO
+        titleList.put("mdat", "  MDAT");    //TODO
+        titleList.put("adat", "  ADAT");    //TODO
         titleList.put("cwam", "  CWAM");
+        HashMap altTitleList = new HashMap();        // Define alternative fields for the necessary observation data fields
+        altTitleList.put("hwam", "hwah");
+        altTitleList.put("mdat", "mdap");
+        altTitleList.put("adat", "adap");
         HashMap optTitleList = new HashMap();        // Define optional observation data fields
         HashMap titleOutput = new HashMap();         // contain output data field id
         Set titleListId = titleList.keySet();
@@ -104,7 +108,10 @@ public class DssatAFile implements WeatherFile {
                 // check which optional data is exist, if not, remove from map
                 if (!result.getOr(title.toString(), "").toString().equals("")) {
                     titleOutput.put(title, titleList.get(title));
+                } else if (altTitleList.containsKey(title) && !result.getOr(altTitleList.get(title).toString(), "").toString().equals("")) {
+                    titleOutput.put(altTitleList.get(title), titleList.get(title));
                 } else {
+                    // TODO throw new Exception("Incompleted record because missing data : [" + title + "]");
                     System.out.println("Incompleted record because missing data : [" + title + "]");
                 }
             }
@@ -133,7 +140,8 @@ public class DssatAFile implements WeatherFile {
                     record = adapter.exportRecord((Map) observeRecords.get(j));
                     br.write(String.format(" %1$5d", trno));
                     for (int k = i * 40; k < limit; k++) {
-                        if (titleOutputId[k].toString().equals("adap") || titleOutputId[k].toString().equals("mdap")) {
+                        if ((titleOutputId[k].toString().equals("adap") && titleOutput.get(titleOutputId[k]).toString().trim().equals("ADAT"))
+                                || (titleOutputId[k].toString().equals("mdap") && titleOutput.get(titleOutputId[k]).toString().trim().equals("MDAT"))) {
                             br.write(String.format("%1$6s", formatDateStr(result.getOr("pdate", defValI).toString(), record.getOr(titleOutputId[k].toString(), defValI).toString())));
                         } else {
                             br.write(String.format("%1$6s", record.getOr(titleOutputId[k].toString(), defValR).toString())); //TODO Need to confirm output format for over long data
