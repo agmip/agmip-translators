@@ -75,7 +75,6 @@ public class DssatWeather implements WeatherFile {
             // Get Data from input holder
             data = result;
             ArrayList weatherRecords = (ArrayList) data.getOr("WeatherDaily", new ArrayList());
-            System.out.println(weatherRecords);
             
             // Initial BufferedWriter
             String fileName = data.getOr("wst_insi", "").toString();
