@@ -58,14 +58,12 @@ public class DssatWeather implements WeatherFile {
         JSONAdapter adapter = new JSONAdapter();    // JSON Adapter
         AdvancedHashMap<String, Object> record;     // Data holder for daily data
         AdvancedHashMap<String, Object> data;       // Data holder for whole weather data
-        BufferedWriter br = null;                    // output object
-        //String[] optDailyId = {"tdew", "wind", "pard"};            // Define optional daily data fields
-        HashMap optDaily = new HashMap();
+        BufferedWriter br = null;                   // output object
+        HashMap optDaily = new HashMap();           // Define optional daily data fields
         optDaily.put("tdew", "  DEWP");
         optDaily.put("wind", "  WIND");
         optDaily.put("pard", "   PAR");
         Set optDailyIds = optDaily.keySet();
-        //StringBuilder optDailyTitle = new StringBuilder();
 //        File file;
 //        FileWriter output;
 
