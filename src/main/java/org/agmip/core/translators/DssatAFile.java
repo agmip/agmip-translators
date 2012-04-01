@@ -136,7 +136,7 @@ public class DssatAFile implements WeatherFile {
                     record = adapter.exportRecord((Map) observeRecords.get(j));
                     br.write(String.format(" %1$5d", trno));
                     for (int k = i * 40; k < limit; k++) {
-                        br.write(String.format("%1$6s", record.getOr(titleOutputId[k].toString(), defValR).toString()));
+                        br.write(String.format("%1$6s", record.getOr(titleOutputId[k].toString(), defValR).toString())); //TODO Need to confirm output format for over long data
                     }
                     br.write("\r\n");
                 }
