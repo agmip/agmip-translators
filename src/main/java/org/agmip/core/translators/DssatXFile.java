@@ -32,8 +32,6 @@ public class DssatXFile implements TranslatorOutput {
     /**
      * DSSAT Experiment Data Output method
      * 
-     * @author Meng Zhang
-     * @version 1.0
      * @param arg0  file name(?)
      * @param result  data holder object
      */
@@ -602,8 +600,6 @@ public class DssatXFile implements TranslatorOutput {
      /**
      * Create string of Simulation Control and Automatic Management Section
      * 
-     * @author Meng Zhang
-     * @version 1.0
      * @param type  The return type of string
      *                  (0:default; 1: undefined)
      * @param result  date holder for experiment data
@@ -677,8 +673,6 @@ public class DssatXFile implements TranslatorOutput {
      * 
      * 2012/3/19    change input format from "yy/mm/dd" to "yyyymmdd"
      * 
-     * @author Meng Zhang
-     * @version 1.1
      * @param str  date string with format of "yyyymmdd"
      * @return result date string with format of "yyddd" 
      */
@@ -725,8 +719,6 @@ public class DssatXFile implements TranslatorOutput {
     /**
      * Get index value of the record and set new id value in the array
      * 
-     * @author Meng Zhang
-     * @version 1.0
      * @param idVal  id string for the record
      * @param arr    array of the id
      * @return       current index value of the id

@@ -30,11 +30,9 @@ public class DssatAFile implements TranslatorOutput {
 
     /**
      * DSSAT Observation Data Output method
-     * 
-     * @author Meng Zhang
-     * @version 1.0
-     * @param arg0  file name(?)
-     * @param result  data holder object
+     *
+     * @param arg0 file name(?)
+     * @param result data holder object
      */
     @Override
     public void writeFile(String arg0, AdvancedHashMap result) {
@@ -296,8 +294,7 @@ public class DssatAFile implements TranslatorOutput {
 
     /**
      * Set default value for missing data
-     * 
-     * @author Meng Zhang
+     *
      * @version 1.0
      */
     private void setDefVal() {
@@ -310,11 +307,9 @@ public class DssatAFile implements TranslatorOutput {
 
     /**
      * Get exname with normal format
-     * 
-     * @author Meng Zhang
-     * @version 1.0
-     * @param result  date holder for experiment data
-     * @return       exname
+     *
+     * @param result date holder for experiment data
+     * @return exname
      */
     private String getExName(AdvancedHashMap result) {
 
@@ -328,13 +323,11 @@ public class DssatAFile implements TranslatorOutput {
 
     /**
      * Translate data str from "yyyymmdd" to "yyddd"
-     * 
-     * 2012/3/19    change input format from "yy/mm/dd" to "yyyymmdd"
-     * 
-     * @author Meng Zhang
-     * @version 1.1
-     * @param str  date string with format of "yyyymmdd"
-     * @return result date string with format of "yyddd" 
+     *
+     * 2012/3/19 change input format from "yy/mm/dd" to "yyyymmdd"
+     *
+     * @param str date string with format of "yyyymmdd"
+     * @return result date string with format of "yyddd"
      */
     private String formatDateStr(String str) {
 

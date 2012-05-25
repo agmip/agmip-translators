@@ -27,8 +27,6 @@ public class DssatSoil implements TranslatorOutput {
     /**
      * DSSAT Soil Data Output method
      * 
-     * @author Meng Zhang
-     * @version 1.0
      * @param arg0  file name(?)
      * @param result  data holder object
      */
@@ -177,9 +175,7 @@ public class DssatSoil implements TranslatorOutput {
 
     /**
      * Set default value for missing data
-     * 
-     * @author Meng Zhang
-     * @version 1.0
+     *
      */
     private void setDefVal() {
 

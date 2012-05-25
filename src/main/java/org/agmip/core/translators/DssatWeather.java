@@ -32,8 +32,6 @@ public class DssatWeather implements TranslatorOutput {
     /**
      * DSSAT Weather Data Output method
      * 
-     * @author Meng Zhang
-     * @version 1.0
      * @param arg0  file name(?)
      * @param result  data holder object
      */
@@ -142,8 +140,6 @@ public class DssatWeather implements TranslatorOutput {
      * 
      * 2012/3/19    change input format from "yy/mm/dd" to "yyyymmdd"
      * 
-     * @author Meng Zhang
-     * @version 1.1
      * @param str  date string with format of "yyyymmdd"
      * @return result date string with format of "yyddd" 
      */
@@ -166,8 +162,6 @@ public class DssatWeather implements TranslatorOutput {
     /**
      * Set default value for missing data
      * 
-     * @author Meng Zhang
-     * @version 1.0
      */
     private void setDefVal() {
 
