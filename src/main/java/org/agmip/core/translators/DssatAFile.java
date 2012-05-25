@@ -230,7 +230,7 @@ public class DssatAFile implements TranslatorOutput {
             //Map obvTemp = new LinkedHashMap();
             //obvTemp.put("observed", observeRecords);
             //AdvancedHashMap obvData = adapter.exportRecord(obvTemp);
-            AdvancedHashMap obvData = adapter.exportRecord((Map)result.getOr("observed", new AdvancedHashMap())); // TODO 
+            AdvancedHashMap obvData = adapter.exportRecord((Map) result.getOr("observed", new AdvancedHashMap())); // TODO 
             for (Object title : titleListId) {
                 // check which optional data is exist, if not, remove from map
                 if (!obvData.getOr(title.toString(), "").toString().equals("")) {
@@ -300,7 +300,7 @@ public class DssatAFile implements TranslatorOutput {
     private void setDefVal() {
 
         // defValD = ""; No need to set default value for Date type in Observation file
-        defValR = "-99.0";
+        defValR = "-99";
         defValC = "";
         defValI = "-99";
     }
@@ -336,13 +336,10 @@ public class DssatAFile implements TranslatorOutput {
 
     /**
      * Translate data str from "yyyymmdd" to "yyddd" plus days you want
-     * 
-     * 
-     * @author Meng Zhang
-     * @version 1.0
-     * @param startDate  date string with format of "yyyymmdd"
-     * @param strDays   the number of days need to be added on
-     * @return result date string with format of "yyddd" 
+     *
+     * @param startDate date string with format of "yyyymmdd"
+     * @param strDays the number of days need to be added on
+     * @return result date string with format of "yyddd"
      */
     private String formatDateStr(String startDate, String strDays) {
 

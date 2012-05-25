@@ -695,8 +695,6 @@ public class DssatXFile implements TranslatorOutput {
     /**
      * Set default value for missing data
      * 
-     * @author Meng Zhang
-     * @version 1.0
      * @param result  date holder for experiment data
      */
     private void setDefVal(AdvancedHashMap result) {
@@ -711,7 +709,7 @@ public class DssatXFile implements TranslatorOutput {
             //throw new Exception("Experiment can't be output due to unavailable date info.");
             defValD = "20110101";
         }
-        defValR = "-99.0";
+        defValR = "-99";
         defValC = "";
         defValI = "-99";
     }
@@ -740,8 +738,6 @@ public class DssatXFile implements TranslatorOutput {
     /**
      * Get exname with normal format
      * 
-     * @author Meng Zhang
-     * @version 1.0
      * @param result  date holder for experiment data
      * @return       exname
      */

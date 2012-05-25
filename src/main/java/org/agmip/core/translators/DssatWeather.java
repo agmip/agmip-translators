@@ -166,7 +166,7 @@ public class DssatWeather implements TranslatorOutput {
     private void setDefVal() {
 
         // defValD = ""; No need to set default value for Date type in weather file
-        defValR = "-99.0";
+        defValR = "-99";
         defValC = "";
         defValI = "-99";
     }
