@@ -274,7 +274,7 @@ public class DssatAFile implements TranslatorOutput {
                                 || (titleOutputId[k].toString().equals("mdap") && titleOutput.get(titleOutputId[k]).toString().trim().equals("MDAT"))) {
                             sbData.append(String.format("%1$6s", formatDateStr(result.getOr("pdate", defValI).toString(), record.getOr(titleOutputId[k].toString(), defValI).toString())));
                         } else {
-                            sbData.append(String.format("%1$6s", record.getOr(titleOutputId[k].toString(), defValI).toString())); //TODO Need to confirm output format for over long data
+                            sbData.append(" ").append(formatNumStr(5, record.getOr(titleOutputId[k].toString(), defValI).toString()));
                         }
                     }
                     sbData.append("\r\n");
@@ -359,5 +359,46 @@ public class DssatAFile implements TranslatorOutput {
             return "-99"; //formatDateStr(defValD);
         }
 
+    }
+
+    /**
+     * Format the number with maximum length
+     *
+     * @param bits Maximum length of the output string
+     * @param str Input string of number
+     * @return formated string of number
+     */
+    private static String formatNumStr(int bits, String str) {
+
+        String ret = "";
+        double decimalPower;
+        long decimalPart;
+        double input;
+        String[] inputStr = str.split("\\.");
+        if (inputStr[0].length() > bits) {
+            //throw new Exception();
+        } else {
+            ret = inputStr[0];
+
+            if (inputStr.length > 1 && inputStr[0].length() < bits) {
+                
+                if (inputStr[1].length() <= bits - inputStr[0].length() - 1) {
+                    ret = ret + "." + inputStr[1];
+                } else {
+                    try {
+                    input = Math.abs(Double.valueOf(str));
+                } catch (Exception e) {
+                    // TODO throw exception
+                    return str;
+                }
+                //decimalPower = Math.pow(10, Math.min(bits - inputStr[0].length(), inputStr[1].length()) - 1);
+                decimalPower = Math.pow(10, bits - inputStr[0].length() - 1);
+                decimalPart = Double.valueOf(Math.round(input * decimalPower) % decimalPower).longValue();
+                ret = ret + "." + (decimalPart == 0 && (bits - inputStr[0].length() < 2) ? "" : decimalPart);
+                }
+            }
+        }
+
+        return ret;
     }
 }

@@ -77,13 +77,13 @@ public class DssatWeather implements TranslatorOutput {
             br.write("@ INSI      LAT     LONG  ELEV   TAV   AMP REFHT WNDHT\r\n");
             br.write(String.format("  %1$-4s %2$8s %3$8s %4$5s %5$5s %6$5s %7$5s %8$5s\r\n",
                     data.getOr("wst_insi", defValC).toString(),
-                    data.getOr("wst_lat", defValR).toString(),
-                    data.getOr("wst_long", defValR).toString(),
-                    data.getOr("elev", defValR).toString(),
-                    data.getOr("tav", defValR).toString(),
-                    data.getOr("tamp", defValR).toString(),
-                    data.getOr("refht", defValR).toString(),
-                    data.getOr("wndht", defValR).toString()));
+                    formatNumStr(8, data.getOr("wst_lat", defValR).toString()),
+                    formatNumStr(8, data.getOr("wst_long", defValR).toString()),
+                    formatNumStr(5, data.getOr("elev", defValR).toString()),
+                    formatNumStr(5, data.getOr("tav", defValR).toString()),
+                    formatNumStr(5, data.getOr("tamp", defValR).toString()),
+                    formatNumStr(5, data.getOr("refht", defValR).toString()),
+                    formatNumStr(5, data.getOr("wndht", defValR).toString())));
 
             // Daily weather data section
             // Fixed Title
@@ -109,15 +109,15 @@ public class DssatWeather implements TranslatorOutput {
                     // Fixed data part
                     br.write(String.format("%1$5s %2$5s %3$5s %4$5s %5$5s",
                         formatDateStr(record.getOr("w_date", defValD).toString()),
-                        record.getOr("srad", defValR).toString(),
-                        record.getOr("tmax", defValR).toString(),
-                        record.getOr("tmin", defValR).toString(),
-                        record.getOr("rain", defValR).toString()));
+                        formatNumStr(5, record.getOr("srad", defValR).toString()),
+                        formatNumStr(5, record.getOr("tmax", defValR).toString()),
+                        formatNumStr(5, record.getOr("tmin", defValR).toString()),
+                        formatNumStr(5, record.getOr("rain", defValR).toString())));
                     
                     // Optional data part
                     for (Object optDailyId : optDailyIds) {
                         if (optDaily.get(optDailyId) != null) {
-                            br.write(String.format(" %1$5s", record.getOr(optDailyId.toString(), defValR).toString()));
+                            br.write(String.format(" %1$5s", formatNumStr(5, record.getOr(optDailyId.toString(), defValR).toString())));
                         }
                     }
                     br.write("\r\n");
@@ -169,5 +169,54 @@ public class DssatWeather implements TranslatorOutput {
         defValR = "-99";
         defValC = "";
         defValI = "-99";
+    }
+    
+    /**
+     * Format the number with maximum length and type
+     *
+     * @param bits Maximum length of the output string
+     * @param str Input string of number
+     * @return formated string of number
+     */
+    private static String formatNumStr(int bits, String str) {
+
+        String ret = "";
+        double decimalPower;
+        long decimalPart;
+        double input;
+        try {
+                    input = Math.abs(Double.valueOf(str));
+                    System.out.println(str);
+                } catch (Exception e) {
+                    // TODO throw exception
+                    System.out.println("[" + str + "]");
+                    return str;
+                } //todo debug code
+        String[] inputStr = str.split("\\.");
+        if (inputStr[0].length() > bits) {
+            //throw new Exception();
+        } else {
+            ret = inputStr[0];
+
+            if (inputStr.length > 1 && inputStr[0].length() < bits) {
+                
+                if (inputStr[1].length() <= bits - inputStr[0].length() - 1) {
+                    ret = ret + "." + inputStr[1];
+                } else {
+                    try {
+                    input = Math.abs(Double.valueOf(str));
+                } catch (Exception e) {
+                    // TODO throw exception
+                    return str;
+                }
+                //decimalPower = Math.pow(10, Math.min(bits - inputStr[0].length(), inputStr[1].length()) - 1);
+                decimalPower = Math.pow(10, bits - inputStr[0].length() - 1);
+                decimalPart = Double.valueOf(Math.round(input * decimalPower) % decimalPower).longValue();
+                ret = ret + "." + (decimalPart == 0 && (bits - inputStr[0].length() < 2) ? "" : decimalPart);
+                }
+            }
+        }
+        
+        return ret;
     }
 }

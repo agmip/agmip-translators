@@ -75,23 +75,23 @@ public class DssatSoil implements TranslatorOutput {
                         data.getOr("soil_id", defValC).toString(),
                         data.getOr("sl_source", defValC).toString(),
                         data.getOr("sltx", defValC).toString(),
-                        data.getOr("sldp", defValR).toString(),
+                        formatNumStr(5, data.getOr("sldp", defValR).toString()),
                         data.getOr("classification", defValC).toString()));
                 br.write("@SITE        COUNTRY          LAT     LONG SCS FAMILY\r\n");
                 br.write(String.format(" %1$-23s %2$8s %3$8s %4$-50s\r\n",
                         data.getOr("site", defValC).toString(),
-                        data.getOr("soillat", defValR).toString(),
-                        data.getOr("soillong", defValR).toString(),
+                        formatNumStr(8, data.getOr("soillat", defValR).toString()),
+                        formatNumStr(8, data.getOr("soillong", defValR).toString()),
                         data.getOr("name", defValC).toString()));
                 br.write("@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE\r\n");
                 br.write(String.format(" %1$-5s %2$5s %3$5s %4$5s %5$5s %6$5s %7$5s %8$-5s %9$-5s %10$-5s\r\n",
                         data.getOr("scom", defValC).toString(),
-                        data.getOr("salb", defValR).toString(),
-                        data.getOr("slu1", defValR).toString(),
-                        data.getOr("sldr", defValR).toString(),
-                        data.getOr("slro", defValR).toString(),
-                        data.getOr("slnf", defValR).toString(),
-                        data.getOr("slpf", defValR).toString(),
+                        formatNumStr(5, data.getOr("salb", defValR).toString()),
+                        formatNumStr(5, data.getOr("slu1", defValR).toString()),
+                        formatNumStr(5, data.getOr("sldr", defValR).toString()),
+                        formatNumStr(5, data.getOr("slro", defValR).toString()),
+                        formatNumStr(5, data.getOr("slnf", defValR).toString()),
+                        formatNumStr(5, data.getOr("slpf", defValR).toString()),
                         data.getOr("smhb", defValC).toString(),
                         data.getOr("smpx", defValC).toString(),
                         data.getOr("smke", defValC).toString()));
@@ -118,44 +118,44 @@ public class DssatSoil implements TranslatorOutput {
                     record = adapter.exportRecord((Map) soilRecords.get(j));
                     // part one
                     br.write(String.format(" %1$5s %2$-5s %3$5s %4$5s %5$5s %6$5s %7$5s %8$5s %9$5s %10$5s %11$5s %12$5s %13$5s %14$5s %15$5s %16$5s %17$5s\r\n",
-                            record.getOr("sllb", defValR).toString(), //TODO Do I need to check if sllb is a valid value
+                            formatNumStr(5, record.getOr("sllb", defValR).toString()), //TODO Do I need to check if sllb is a valid value
                             record.getOr("slmh", defValC).toString(),
-                            record.getOr("slll", defValR).toString(),
-                            record.getOr("sldul", defValR).toString(),
-                            record.getOr("slsat", defValR).toString(),
-                            record.getOr("slrgf", defValR).toString(),
-                            record.getOr("sksat", defValR).toString(),
-                            record.getOr("sbdm", defValR).toString(),
-                            record.getOr("sloc", defValR).toString(),
-                            record.getOr("clay", defValR).toString(),
-                            record.getOr("silt", defValR).toString(),
-                            record.getOr("slcf", defValR).toString(),
-                            record.getOr("slni", defValR).toString(),
-                            record.getOr("slphw", defValR).toString(),
-                            record.getOr("slphb", defValR).toString(),
-                            record.getOr("slcec", defValR).toString(),
-                            record.getOr("sadc", defValR).toString()));
+                            formatNumStr(5, record.getOr("slll", defValR).toString()),
+                            formatNumStr(5, record.getOr("sldul", defValR).toString()),
+                            formatNumStr(5, record.getOr("slsat", defValR).toString()),
+                            formatNumStr(5, record.getOr("slrgf", defValR).toString()),
+                            formatNumStr(5, record.getOr("sksat", defValR).toString()),
+                            formatNumStr(5, record.getOr("sbdm", defValR).toString()),
+                            formatNumStr(5, record.getOr("sloc", defValR).toString()),
+                            formatNumStr(5, record.getOr("clay", defValR).toString()),
+                            formatNumStr(5, record.getOr("silt", defValR).toString()),
+                            formatNumStr(5, record.getOr("slcf", defValR).toString()),
+                            formatNumStr(5, record.getOr("slni", defValR).toString()),
+                            formatNumStr(5, record.getOr("slphw", defValR).toString()),
+                            formatNumStr(5, record.getOr("slphb", defValR).toString()),
+                            formatNumStr(5, record.getOr("slcec", defValR).toString()),
+                            formatNumStr(5, record.getOr("sadc", defValR).toString())));
 
                     // part two
                     if (p2Flg) {
                         sbLyrP2.append(String.format(" %1$5s %2$5s %3$5s %4$5s %5$5s %6$5s %7$5s %8$5s %9$5s %10$5s %11$5s %12$5s %13$5s %14$5s %15$5s %16$5s %17$5s\r\n",
-                                record.getOr("sllb", defValR).toString(),
-                                record.getOr("slpx", defValR).toString(),
-                                record.getOr("slpt", defValR).toString(),
-                                record.getOr("slpo", defValR).toString(),
-                                record.getOr("slca", defValR).toString(),
-                                record.getOr("slal", defValR).toString(),
-                                record.getOr("slfe", defValR).toString(),
-                                record.getOr("slmn", defValR).toString(),
-                                record.getOr("slbs", defValR).toString(),
-                                record.getOr("slpa", defValR).toString(),
-                                record.getOr("slpb", defValR).toString(),
-                                record.getOr("slke", defValR).toString(),
-                                record.getOr("slmg", defValR).toString(),
-                                record.getOr("slna", defValR).toString(),
-                                record.getOr("slsu", defValR).toString(),
-                                record.getOr("slec", defValR).toString(),
-                                record.getOr("slca", defValR).toString()));
+                                formatNumStr(5, record.getOr("sllb", defValR).toString()),
+                                formatNumStr(5, record.getOr("slpx", defValR).toString()),
+                                formatNumStr(5, record.getOr("slpt", defValR).toString()),
+                                formatNumStr(5, record.getOr("slpo", defValR).toString()),
+                                formatNumStr(5, record.getOr("slca", defValR).toString()),
+                                formatNumStr(5, record.getOr("slal", defValR).toString()),
+                                formatNumStr(5, record.getOr("slfe", defValR).toString()),
+                                formatNumStr(5, record.getOr("slmn", defValR).toString()),
+                                formatNumStr(5, record.getOr("slbs", defValR).toString()),
+                                formatNumStr(5, record.getOr("slpa", defValR).toString()),
+                                formatNumStr(5, record.getOr("slpb", defValR).toString()),
+                                formatNumStr(5, record.getOr("slke", defValR).toString()),
+                                formatNumStr(5, record.getOr("slmg", defValR).toString()),
+                                formatNumStr(5, record.getOr("slna", defValR).toString()),
+                                formatNumStr(5, record.getOr("slsu", defValR).toString()),
+                                formatNumStr(5, record.getOr("slec", defValR).toString()),
+                                formatNumStr(5, record.getOr("slca", defValR).toString())));
                     }
                 }
 
@@ -183,5 +183,46 @@ public class DssatSoil implements TranslatorOutput {
         defValR = "-99";
         defValC = "";
         defValI = "-99";
+    }
+    
+    /**
+     * Format the number with maximum length and type
+     *
+     * @param bits Maximum length of the output string
+     * @param str Input string of number
+     * @return formated string of number
+     */
+    private static String formatNumStr(int bits, String str) {
+
+        String ret = "";
+        double decimalPower;
+        long decimalPart;
+        double input;
+        String[] inputStr = str.split("\\.");
+        if (inputStr[0].length() > bits) {
+            //throw new Exception();
+        } else {
+            ret = inputStr[0];
+
+            if (inputStr.length > 1 && inputStr[0].length() < bits) {
+                
+                if (inputStr[1].length() <= bits - inputStr[0].length() - 1) {
+                    ret = ret + "." + inputStr[1];
+                } else {
+                    try {
+                    input = Math.abs(Double.valueOf(str));
+                } catch (Exception e) {
+                    // TODO throw exception
+                    return str;
+                }
+                //decimalPower = Math.pow(10, Math.min(bits - inputStr[0].length(), inputStr[1].length()) - 1);
+                decimalPower = Math.pow(10, bits - inputStr[0].length() - 1);
+                decimalPart = Double.valueOf(Math.round(input * decimalPower) % decimalPower).longValue();
+                ret = ret + "." + (decimalPart == 0 && (bits - inputStr[0].length() < 2) ? "" : decimalPart);
+                }
+            }
+        }
+        
+        return ret;
     }
 }

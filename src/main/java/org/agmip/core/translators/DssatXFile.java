@@ -123,15 +123,15 @@ public class DssatXFile implements TranslatorOutput {
             if (result.containsKey("plot_info")) {
                 br.write("@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........\r\n");
                 br.write(String.format(" %1$6s %2$5s %3$5s %4$5s %5$5s %6$-5s %7$5s %8$5s %9$5s %10$-15s\r\n",
-                        result.getOr("parea", defValR).toString(),
-                        result.getOr("prno", defValI).toString(),
-                        result.getOr("plen", defValR).toString(),
-                        result.getOr("pldr", defValI).toString(),
-                        result.getOr("plsp", defValI).toString(),
+                        formatNumStr(6, result.getOr("parea", defValR).toString()),
+                        formatNumStr(5, result.getOr("prno", defValI).toString()),
+                        formatNumStr(5, result.getOr("plen", defValR).toString()),
+                        formatNumStr(5, result.getOr("pldr", defValI).toString()),
+                        formatNumStr(5, result.getOr("plsp", defValI).toString()),
                         result.getOr("play", defValC).toString(),
-                        result.getOr("pltha", defValR).toString(),
-                        result.getOr("hrno", defValI).toString(),
-                        result.getOr("hlen", defValR).toString(),
+                        formatNumStr(5, result.getOr("pltha", defValR).toString()),
+                        formatNumStr(5, result.getOr("hrno", defValI).toString()),
+                        formatNumStr(5, result.getOr("hlen", defValR).toString()),
                         result.getOr("plthm", defValC).toString()));
             }
             // Notes
@@ -252,27 +252,27 @@ public class DssatXFile implements TranslatorOutput {
                             data.getOr("id_field", defValC).toString(),
                             data.getOr("wst_insi", defValC).toString(),
                             data.getOr("flsl", defValC).toString(),
-                            data.getOr("flob", defValR).toString(),
+                            formatNumStr(5, data.getOr("flob", defValR).toString()),
                             data.getOr("fl_drntype", defValC).toString(),
-                            data.getOr("fldrd", defValR).toString(),
-                            data.getOr("fldrs", defValR).toString(),
+                            formatNumStr(5, data.getOr("fldrd", defValR).toString()),
+                            formatNumStr(5, data.getOr("fldrs", defValR).toString()),
                             data.getOr("flst", defValC).toString(),
                             data.getOr("sltx", defValC).toString(),
-                            data.getOr("sldp", defValR).toString(),
+                            formatNumStr(5, data.getOr("sldp", defValR).toString()),
                             data.getOr("soil_id", defValC).toString(),
                             data.getOr("fl_name", defValC).toString()));
 
                     eventPart2.append(String.format("%1$2s %2$15s %3$15s %4$9s %5$17s %6$5s %7$5s %8$5s %9$-5s %10$5s\r\n",
                             idx+1, //data.getOr("fl", defValI).toString(),
-                            data.getOr("fl_lat", defValR).toString(),
-                            data.getOr("fl_long", defValR).toString(),
-                            data.getOr("flele", defValR).toString(),
-                            data.getOr("farea", defValR).toString(),
-                            data.getOr("", defValR).toString(),
-                            data.getOr("fllwr", defValR).toString(),
-                            data.getOr("flsla", defValR).toString(),
+                            formatNumStr(15, data.getOr("fl_lat", defValR).toString()),
+                            formatNumStr(15, data.getOr("fl_long", defValR).toString()),
+                            formatNumStr(9, data.getOr("flele", defValR).toString()),
+                            data.getOr("farea", defValR).toString(), // TODO number?!
+                            formatNumStr(5, data.getOr("", defValR).toString()), // TODO id missing
+                            formatNumStr(5, data.getOr("fllwr", defValR).toString()),
+                            formatNumStr(5, data.getOr("flsla", defValR).toString()),
                             data.getOr("flhst", defValC).toString(),
-                            data.getOr("fhdur", defValR).toString()));
+                            formatNumStr(5, data.getOr("fhdur", defValR).toString())));
                 }
                 br.write(eventPart2.toString() + "\r\n");
             }
@@ -303,15 +303,15 @@ public class DssatXFile implements TranslatorOutput {
     //                    data = adapter.exportRecord((Map) secRecords.get(j));
                         br.write(String.format("%1$2s %2$5s %3$5s %4$5s %5$5s %6$5s %7$5s %8$5s %9$5s %10$5s\r\n",
                                 idx+1, //data.getOr("sa", defValI).toString(),
-                                data.getOr("sabl", defValR).toString(),
-                                data.getOr("sabdm", defValR).toString(),
-                                data.getOr("saoc", defValR).toString(),
-                                data.getOr("sani", defValR).toString(),
-                                data.getOr("saphw", defValR).toString(),
-                                data.getOr("saphb", defValR).toString(),
-                                data.getOr("sapx", defValR).toString(),
-                                data.getOr("sake", defValR).toString(),
-                                data.getOr("sasc", defValR).toString()));
+                                formatNumStr(5, data.getOr("sabl", defValR).toString()),
+                                formatNumStr(5, data.getOr("sabdm", defValR).toString()),
+                                formatNumStr(5, data.getOr("saoc", defValR).toString()),
+                                formatNumStr(5, data.getOr("sani", defValR).toString()),
+                                formatNumStr(5, data.getOr("saphw", defValR).toString()),
+                                formatNumStr(5, data.getOr("saphb", defValR).toString()),
+                                formatNumStr(5, data.getOr("sapx", defValR).toString()),
+                                formatNumStr(5, data.getOr("sake", defValR).toString()),
+                                formatNumStr(5, data.getOr("sasc", defValR).toString())));
                     }
                 }
                 br.write("\r\n");
@@ -331,16 +331,16 @@ public class DssatXFile implements TranslatorOutput {
                             idx+1, //data.getOr("ic", defValI).toString(),
                             data.getOr("icpcr", defValC).toString(),
                             formatDateStr(data.getOr("icdat", defValD).toString()),
-                            data.getOr("icrt", defValR).toString(),
-                            data.getOr("icnd", defValR).toString(),
-                            data.getOr("icrzno", defValR).toString(),
-                            data.getOr("icrze", defValR).toString(),
-                            data.getOr("icwt", defValR).toString(),
-                            data.getOr("icrag", defValR).toString(),
-                            data.getOr("icrn", defValR).toString(),
-                            data.getOr("icrp", defValR).toString(),
-                            data.getOr("icrip", defValR).toString(),
-                            data.getOr("icrdp", defValR).toString(), 
+                            formatNumStr(5, data.getOr("icrt", defValR).toString()),
+                            formatNumStr(5, data.getOr("icnd", defValR).toString()),
+                            formatNumStr(5, data.getOr("icrzno", defValR).toString()),
+                            formatNumStr(5, data.getOr("icrze", defValR).toString()),
+                            formatNumStr(5, data.getOr("icwt", defValR).toString()),
+                            formatNumStr(5, data.getOr("icrag", defValR).toString()),
+                            formatNumStr(5, data.getOr("icrn", defValR).toString()),
+                            formatNumStr(5, data.getOr("icrp", defValR).toString()),
+                            formatNumStr(5, data.getOr("icrip", defValR).toString()),
+                            formatNumStr(5, data.getOr("icrdp", defValR).toString()), 
                             data.getOr("ic_name", defValC).toString()));
 
                     br.write("@C  ICBL  SH2O  SNH4  SNO3\r\n");
@@ -350,10 +350,10 @@ public class DssatXFile implements TranslatorOutput {
     //                    data = adapter.exportRecord((Map) secRecords.get(j));
                         br.write(String.format("%1$2s %2$5s %3$5s %4$5s %5$5s\r\n",
                                 idx+1, //data.getOr("ic", defValI).toString(),
-                                data.getOr("icbl", defValR).toString(),
-                                data.getOr("ich2o", defValR).toString(),
-                                data.getOr("icnh4", defValR).toString(),
-                                data.getOr("icno3", defValR).toString()));
+                                formatNumStr(5, data.getOr("icbl", defValR).toString()),
+                                formatNumStr(5, data.getOr("ich2o", defValR).toString()),
+                                formatNumStr(5, data.getOr("icnh4", defValR).toString()),
+                                formatNumStr(5, data.getOr("icno3", defValR).toString())));
 
                     }
                 }
@@ -374,18 +374,18 @@ public class DssatXFile implements TranslatorOutput {
                             idx+1, //data.getOr("pl", defValI).toString(),
                             formatDateStr(data.getOr("pdate", defValD).toString()),
                             formatDateStr(data.getOr("pldae", defValD).toString()),
-                            data.getOr("plpop", data.getOr("plpoe", defValR)).toString(),
-                            data.getOr("plpoe", data.getOr("plpop", defValR)).toString(),
+                            formatNumStr(5, data.getOr("plpop", data.getOr("plpoe", defValR)).toString()),
+                            formatNumStr(5, data.getOr("plpoe", data.getOr("plpop", defValR)).toString()),
                             data.getOr("plme", defValC).toString(),
                             data.getOr("plds", defValC).toString(),
-                            data.getOr("plrs", defValR).toString(),
-                            data.getOr("plrd", defValR).toString(),
-                            data.getOr("pldp", defValR).toString(),
-                            data.getOr("plmwt", defValR).toString(),
-                            data.getOr("page", defValR).toString(),
-                            data.getOr("penv", defValR).toString(),
-                            data.getOr("plph", defValR).toString(),
-                            data.getOr("plspl", defValR).toString(),
+                            formatNumStr(5, data.getOr("plrs", defValR).toString()),
+                            formatNumStr(5, data.getOr("plrd", defValR).toString()),
+                            formatNumStr(5, data.getOr("pldp", defValR).toString()),
+                            formatNumStr(5, data.getOr("plmwt", defValR).toString()),
+                            formatNumStr(5, data.getOr("page", defValR).toString()),
+                            formatNumStr(5, data.getOr("penv", defValR).toString()),
+                            formatNumStr(5, data.getOr("plph", defValR).toString()),
+                            formatNumStr(5, data.getOr("plspl", defValR).toString()),
                             data.getOr("pl_name", defValC).toString()));
 
                 }
@@ -404,13 +404,13 @@ public class DssatXFile implements TranslatorOutput {
                     br.write("@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME\r\n");
                     br.write(String.format("%1$2s %2$5s %3$5s %4$5s %5$5s %6$-5s %7$-5s %8$5s %9$s\r\n",
                             idx+1, //data.getOr("ir", defValI).toString(),
-                            data.getOr("ireff", defValR).toString(),
-                            data.getOr("irmdp", defValR).toString(),
-                            data.getOr("irthr", defValR).toString(),
-                            data.getOr("irept", defValR).toString(),
+                            formatNumStr(5, data.getOr("ireff", defValR).toString()),
+                            formatNumStr(5, data.getOr("irmdp", defValR).toString()),
+                            formatNumStr(5, data.getOr("irthr", defValR).toString()),
+                            formatNumStr(5, data.getOr("irept", defValR).toString()),
                             data.getOr("irstg", defValC).toString(),
                             data.getOr("iame", defValC).toString(),
-                            data.getOr("iamt", defValR).toString(),
+                            formatNumStr(5, data.getOr("iamt", defValR).toString()),
                             data.getOr("ir_name", defValC).toString()));
 
                     br.write("@I IDATE  IROP IRVAL\r\n");
@@ -422,7 +422,7 @@ public class DssatXFile implements TranslatorOutput {
                                 idx+1, //data.getOr("ir", defValI).toString(),
                                 formatDateStr(data.getOr("idate", defValD).toString()),
                                 data.getOr("irop", defValC).toString(),
-                                data.getOr("irval", defValR).toString()));
+                                formatNumStr(5, data.getOr("irval", defValR).toString())));
                     }
                 }
                 br.write("\r\n");
@@ -442,12 +442,12 @@ public class DssatXFile implements TranslatorOutput {
                             formatDateStr(data.getOr("fdate", defValD).toString()),
                             data.getOr("fecd", defValC).toString(),
                             data.getOr("feacd", defValC).toString(),
-                            data.getOr("fedep", defValR).toString(),
-                            data.getOr("feamn", defValR).toString(),
-                            data.getOr("feamp", defValR).toString(),
-                            data.getOr("feamk", defValR).toString(),
-                            data.getOr("feamc", defValR).toString(),
-                            data.getOr("feamo", defValR).toString(),
+                            formatNumStr(5, data.getOr("fedep", defValR).toString()),
+                            formatNumStr(5, data.getOr("feamn", defValR).toString()),
+                            formatNumStr(5, data.getOr("feamp", defValR).toString()),
+                            formatNumStr(5, data.getOr("feamk", defValR).toString()),
+                            formatNumStr(5, data.getOr("feamc", defValR).toString()),
+                            formatNumStr(5, data.getOr("feamo", defValR).toString()),
                             data.getOr("feocd", defValC).toString(),
                             data.getOr("fe_name", defValC).toString()));
 
@@ -469,13 +469,13 @@ public class DssatXFile implements TranslatorOutput {
                             idx+1, //data.getOr("om", defValI).toString(),
                             formatDateStr(data.getOr("omdat", defValD).toString()),
                             data.getOr("omcd", defValC).toString(),
-                            data.getOr("omamt", defValR).toString(),
-                            data.getOr("omnpct", defValR).toString(),
-                            data.getOr("omppct", defValR).toString(),
-                            data.getOr("omkpct", defValR).toString(),
-                            data.getOr("ominp", defValR).toString(),
-                            data.getOr("omdep", defValR).toString(),
-                            data.getOr("omacd", defValR).toString(),
+                            formatNumStr(5, data.getOr("omamt", defValR).toString()),
+                            formatNumStr(5, data.getOr("omnpct", defValR).toString()),
+                            formatNumStr(5, data.getOr("omppct", defValR).toString()),
+                            formatNumStr(5, data.getOr("omkpct", defValR).toString()),
+                            formatNumStr(5, data.getOr("ominp", defValR).toString()),
+                            formatNumStr(5, data.getOr("omdep", defValR).toString()),
+                            formatNumStr(5, data.getOr("omacd", defValR).toString()),
                             data.getOr("om_name", defValC).toString()));
 
                 }
@@ -496,7 +496,7 @@ public class DssatXFile implements TranslatorOutput {
                             idx+1, //data.getOr("ch", defValI).toString(),
                             formatDateStr(data.getOr("cdate", defValD).toString()),
                             data.getOr("chcd", defValC).toString(),
-                            data.getOr("chamt", defValR).toString(),
+                            formatNumStr(5, data.getOr("chamt", defValR).toString()),
                             data.getOr("chacd", defValC).toString(),
                             data.getOr("chdep", defValC).toString(),
                             data.getOr("ch_targets", defValC).toString(),
@@ -520,7 +520,7 @@ public class DssatXFile implements TranslatorOutput {
                             idx+1, //data.getOr("ti", defValI).toString(),
                             formatDateStr(data.getOr("tdate", defValD).toString()),
                             data.getOr("tiimp", defValC).toString(),
-                            data.getOr("tidep", defValR).toString(),
+                            formatNumStr(5, data.getOr("tidep", defValR).toString()),
                             data.getOr("ti_name", defValC).toString()));
 
                 }
@@ -541,21 +541,21 @@ public class DssatXFile implements TranslatorOutput {
                             idx+1, //data.getOr("em", defValI).toString(),
                             formatDateStr(data.getOr("emday", defValD).toString()),
                             data.getOr("ecdyl", defValC).toString(),
-                            data.getOr("emdyl", defValR).toString(),
+                            formatNumStr(4, data.getOr("emdyl", defValR).toString()),
                             data.getOr("ecrad", defValC).toString(),
-                            data.getOr("emrad", defValR).toString(),
+                            formatNumStr(4, data.getOr("emrad", defValR).toString()),
                             data.getOr("ecmax", defValC).toString(),
-                            data.getOr("emmax", defValR).toString(),
+                            formatNumStr(4, data.getOr("emmax", defValR).toString()),
                             data.getOr("ecmin", defValC).toString(),
-                            data.getOr("emmin", defValR).toString(),
+                            formatNumStr(4, data.getOr("emmin", defValR).toString()),
                             data.getOr("ecrai", defValC).toString(),
-                            data.getOr("emrai", defValR).toString(),
+                            formatNumStr(4, data.getOr("emrai", defValR).toString()),
                             data.getOr("ecco2", defValC).toString(),
-                            data.getOr("emco2", defValR).toString(),
+                            formatNumStr(4, data.getOr("emco2", defValR).toString()),
                             data.getOr("ecdew", defValC).toString(),
-                            data.getOr("emdew", defValR).toString(),
+                            formatNumStr(4, data.getOr("emdew", defValR).toString()),
                             data.getOr("ecwnd", defValC).toString(),
-                            data.getOr("emwnd", defValR).toString(),
+                            formatNumStr(4, data.getOr("emwnd", defValR).toString()),
                             data.getOr("em_name", defValC).toString()));
 
                 }
@@ -578,8 +578,8 @@ public class DssatXFile implements TranslatorOutput {
                             data.getOr("hastg", defValC).toString(),
                             data.getOr("hacom", defValC).toString(),
                             data.getOr("hasiz", defValC).toString(),
-                            data.getOr("hapc", defValR).toString(),
-                            data.getOr("habpc", defValR).toString(),
+                            formatNumStr(5, data.getOr("hapc", defValR).toString()),
+                            formatNumStr(5, data.getOr("habpc", defValR).toString()),
                             data.getOr("ha_name", defValC).toString()));
 
                 }
@@ -746,6 +746,55 @@ public class DssatXFile implements TranslatorOutput {
         String ret = result.getOr("exname", "").toString();
         if (ret.contains(".")) {
             ret = ret.substring(0, ret.length()-1).replace(".", "");
+        }
+        
+        return ret;
+    }
+    
+    /**
+     * Format the number with maximum length and type
+     *
+     * @param bits Maximum length of the output string
+     * @param str Input string of number
+     * @return formated string of number
+     */
+    private static String formatNumStr(int bits, String str) {
+
+        String ret = "";
+        double decimalPower;
+        long decimalPart;
+        double input;
+        try {
+                    input = Math.abs(Double.valueOf(str));
+                    System.out.println(str);
+                } catch (Exception e) {
+                    // TODO throw exception
+                    System.out.println("[" + str + "]");
+                    return str;
+                } //todo debug code
+        String[] inputStr = str.split("\\.");
+        if (inputStr[0].length() > bits) {
+            //throw new Exception();
+        } else {
+            ret = inputStr[0];
+
+            if (inputStr.length > 1 && inputStr[0].length() < bits) {
+                
+                if (inputStr[1].length() <= bits - inputStr[0].length() - 1) {
+                    ret = ret + "." + inputStr[1];
+                } else {
+                    try {
+                    input = Math.abs(Double.valueOf(str));
+                } catch (Exception e) {
+                    // TODO throw exception
+                    return str;
+                }
+                //decimalPower = Math.pow(10, Math.min(bits - inputStr[0].length(), inputStr[1].length()) - 1);
+                decimalPower = Math.pow(10, bits - inputStr[0].length() - 1);
+                decimalPart = Double.valueOf(Math.round(input * decimalPower) % decimalPower).longValue();
+                ret = ret + "." + (decimalPart == 0 && (bits - inputStr[0].length() < 2) ? "" : decimalPart);
+                }
+            }
         }
         
         return ret;
