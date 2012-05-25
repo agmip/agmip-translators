@@ -3,7 +3,7 @@ package org.agmip.core.translators;
 import java.io.IOException;
 
 import org.agmip.core.types.AdvancedHashMap;
-import org.agmip.core.types.weather.WeatherData;
+import org.agmip.core.types.TranslatorOutput;
 import org.agmip.util.JSONAdapter;
 
 public class TestClass {
