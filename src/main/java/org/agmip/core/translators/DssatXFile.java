@@ -268,7 +268,7 @@ public class DssatXFile implements TranslatorOutput {
                             formatNumStr(15, data.getOr("fl_long", defValR).toString()),
                             formatNumStr(9, data.getOr("flele", defValR).toString()),
                             formatNumStr(17, data.getOr("farea", defValR).toString()),
-                            formatNumStr(5, data.getOr("slen", defValR).toString()), // TODO calculate?
+                            formatNumStr(5, "0"), //data.getOr("slen", defValR).toString()), // TODO calculate? keep -99
                             formatNumStr(5, data.getOr("fllwr", defValR).toString()),
                             formatNumStr(5, data.getOr("flsla", defValR).toString()),
                             data.getOr("flhst", defValC).toString(),
