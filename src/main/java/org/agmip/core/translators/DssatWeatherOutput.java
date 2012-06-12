@@ -1,16 +1,14 @@
 package org.agmip.core.translators;
 
-import java.io.IOException;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.BufferedWriter;
-import java.util.Calendar;
-import java.util.Map;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
-import org.agmip.core.types.*;
+import org.agmip.core.types.AdvancedHashMap;
 import org.agmip.util.JSONAdapter;
 
 /**
