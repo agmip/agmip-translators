@@ -10,7 +10,7 @@ import org.agmip.core.types.AdvancedHashMap;
  *
  * @author Mike
  */
-public class DssatController {
+public class DssatControllerOutput {
 
     private DssatCommonOutput[] outputs = {
         new DssatXFileOutput(),
