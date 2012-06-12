@@ -17,11 +17,11 @@ import org.junit.Test;
  */
 public class DssatSoilTest {
     
-    DssatSoil obDssatSoil;
+    DssatSoilOutput obDssatSoil;
     
     @Before
     public void setUp() throws Exception {
-        obDssatSoil = new DssatSoil();
+        obDssatSoil = new DssatSoilOutput();
     }
 
     @Test

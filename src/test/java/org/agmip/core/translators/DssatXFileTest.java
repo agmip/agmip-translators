@@ -17,11 +17,11 @@ import org.junit.Test;
  */
 public class DssatXFileTest {
     
-    DssatXFile obDssatXFile;
+    DssatXFileOutput obDssatXFile;
     
     @Before
     public void setUp() throws Exception {
-        obDssatXFile = new DssatXFile();
+        obDssatXFile = new DssatXFileOutput();
     }
 
     @Test
