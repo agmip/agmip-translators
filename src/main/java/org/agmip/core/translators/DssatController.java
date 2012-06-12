@@ -16,7 +16,8 @@ public class DssatController {
         new DssatXFileOutput(),
         new DssatSoilOutput(),
         new DssatWeatherOutput(),
-        new DssatAFileOutput()};
+        new DssatAFileOutput(),
+        new DssatTFileOutput()};
     
     public void writeFiles(String arg0, AdvancedHashMap result) {
         
