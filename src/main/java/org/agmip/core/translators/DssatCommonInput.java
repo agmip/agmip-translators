@@ -3,7 +3,7 @@ package org.agmip.core.translators;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import org.agmip.core.types.AdvancedHashMap;
-import org.agmip.core.types.TranslatorOutput;
+import org.agmip.core.types.TranslatorInput;
 
 /**
  * DSSAT Experiment Data I/O API Class
@@ -11,27 +11,25 @@ import org.agmip.core.types.TranslatorOutput;
  * @author Meng Zhang
  * @version 1.0
  */
-public abstract class DssatCommonInput implements TranslatorOutput {
+public abstract class DssatCommonInput implements TranslatorInput {
 
     /**
-     * Translate data str from "yyyymmdd" to "yyddd"
+     * Translate data str from "yyddd" to "yyyymmdd"
      *
-     * 2012/3/19 change input format from "yy/mm/dd" to "yyyymmdd"
-     *
-     * @param str date string with format of "yyyymmdd"
-     * @return result date string with format of "yyddd"
+     * @param str date string with format of "yyddd"
+     * @return result date string with format of "yyyymmdd"
      */
     protected String translateDateStr(String str) {
 
         return translateDateStr(str, "0");
     }
-
+    
     /**
-     * Translate data str from "yyyymmdd" to "yyddd" plus days you want
+     * Translate data str from "yyddd" to "yyyymmdd" plus days you want
      *
-     * @param startDate date string with format of "yyyymmdd"
+     * @param startDate date string with format of "yyydd"
      * @param strDays the number of days need to be added on
-     * @return result date string with format of "yyddd"
+     * @return result date string with format of "yyyymmdd"
      */
     protected String translateDateStr(String startDate, String strDays) {
 
@@ -63,7 +61,7 @@ public abstract class DssatCommonInput implements TranslatorOutput {
     }
     
     /**
-     * Translate data str from "yyyymmdd" to "yyddd" plus days you want
+     * Divide the data in the line into a map
      *
      * @param line The string of line read from data file
      * @param formats The defination of lenght for each data field (String itemName : Integer length)
