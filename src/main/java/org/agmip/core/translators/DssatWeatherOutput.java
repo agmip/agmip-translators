@@ -33,6 +33,7 @@ public class DssatWeatherOutput extends DssatCommonOutput {
         AdvancedHashMap<String, Object> record;     // Data holder for daily data
         AdvancedHashMap<String, Object> data;       // Data holder for whole weather data
         BufferedWriter br;                   // output object
+        StringBuilder sbData = new StringBuilder();     // construct the data info in the output
         HashMap optDaily = new HashMap();           // Define optional daily data fields
         optDaily.put("tdew", "  DEWP");
         optDaily.put("wind", "  WIND");
@@ -61,11 +62,11 @@ public class DssatWeatherOutput extends DssatCommonOutput {
 
             // Output Weather File
             // Titel Section
-            br.write(String.format("*WEATHER DATA : %1$-60s\r\n\r\n", data.getOr("wst_name", defValC).toString()));
+            sbData.append(String.format("*WEATHER DATA : %1$-60s\r\n\r\n", data.getOr("wst_name", defValC).toString()));
 
             // Weather Station Section
-            br.write("@ INSI      LAT     LONG  ELEV   TAV   AMP REFHT WNDHT\r\n");
-            br.write(String.format("  %1$-4s %2$8s %3$8s %4$5s %5$5s %6$5s %7$5s %8$5s\r\n",
+            sbData.append("@ INSI      LAT     LONG  ELEV   TAV   AMP REFHT WNDHT\r\n");
+            sbData.append(String.format("  %1$-4s %2$8s %3$8s %4$5s %5$5s %6$5s %7$5s %8$5s\r\n",
                     data.getOr("wst_insi", defValC).toString(),
                     formatNumStr(8, data.getOr("wst_lat", defValR).toString()),
                     formatNumStr(8, data.getOr("wst_long", defValR).toString()),
@@ -77,19 +78,19 @@ public class DssatWeatherOutput extends DssatCommonOutput {
 
             // Daily weather data section
             // Fixed Title
-            br.write("@DATE  SRAD  TMAX  TMIN  RAIN");
+            sbData.append("@DATE  SRAD  TMAX  TMIN  RAIN");
 
             // Optional Title
             for (Object optDailyId : optDailyIds) {
                 // check which optional data is exist, if not, remove from map
                 if (!data.getOr(optDailyId.toString(), "").toString().equals("")) {
-                    br.write(optDaily.get(optDailyId).toString());
+                    sbData.append(optDaily.get(optDailyId).toString());
                 } else {
                     optDaily.put(optDailyId.toString(), null);
                 }
             }
 
-            br.write("\r\n");
+            sbData.append("\r\n");
 
             for (int i = 0; i < weatherRecords.size(); i++) {
 
@@ -97,7 +98,7 @@ public class DssatWeatherOutput extends DssatCommonOutput {
                 // if date is missing, jump the record
                 if (!record.getOr("w_date", "").toString().equals("")) {
                     // Fixed data part
-                    br.write(String.format("%1$5s %2$5s %3$5s %4$5s %5$5s",
+                    sbData.append(String.format("%1$5s %2$5s %3$5s %4$5s %5$5s",
                             formatDateStr(record.getOr("w_date", defValD).toString()),
                             formatNumStr(5, record.getOr("srad", defValR).toString()),
                             formatNumStr(5, record.getOr("tmax", defValR).toString()),
@@ -107,17 +108,20 @@ public class DssatWeatherOutput extends DssatCommonOutput {
                     // Optional data part
                     for (Object optDailyId : optDailyIds) {
                         if (optDaily.get(optDailyId) != null) {
-                            br.write(String.format(" %1$5s", formatNumStr(5, record.getOr(optDailyId.toString(), defValR).toString())));
+                            sbData.append(String.format(" %1$5s", formatNumStr(5, record.getOr(optDailyId.toString(), defValR).toString())));
                         }
                     }
-                    br.write("\r\n");
+                    sbData.append("\r\n");
                 } else {
                     // TODO Throw exception here
-                    System.out.println("A daily record has the missing date in it.");
+                    //System.out.println("A daily record has the missing date in it.");
+                    sbError.append("! Warning: A daily record has the missing date in it.");
                 }
             }
 
             // Output finish
+            br.write(sbError.toString());
+            br.write(sbData.toString());
             br.close();
         } catch (IOException e) {
             // TODO Auto-generated catch block

@@ -31,6 +31,7 @@ public class DssatSoilOutput extends DssatCommonOutput {
         AdvancedHashMap<String, Object> record;         // Data holder for layer data
         AdvancedHashMap<String, Object> data;           // Data holder for one record of soil data
         BufferedWriter br;                              // output object
+        StringBuilder sbData = new StringBuilder();     // construct the data info in the output
         StringBuilder sbLyrP2 = new StringBuilder();    // output string for second part of layer data
         boolean p2Flg = false;
         String[] p2Ids = {"slpx", "slpt", "slpo", "slca", "slal", "slfe", "slmn", "slbs", "slpa", "slpb", "slke", "slmg", "slna", "slsu", "slec", "slca"};
@@ -64,20 +65,20 @@ public class DssatSoilOutput extends DssatCommonOutput {
                 data = result;
 
                 // Site Info Section
-                br.write(String.format("*%1$-10s  %2$-11s %3$-5s %4$5s %5$-50s\r\n",
+                sbData.append(String.format("*%1$-10s  %2$-11s %3$-5s %4$5s %5$-50s\r\n",
                         data.getOr("soil_id", defValC).toString(),
                         data.getOr("sl_source", defValC).toString(),
                         data.getOr("sltx", defValC).toString(),
                         formatNumStr(5, data.getOr("sldp", defValR).toString()),
                         data.getOr("classification", defValC).toString()));
-                br.write("@SITE        COUNTRY          LAT     LONG SCS FAMILY\r\n");
-                br.write(String.format(" %1$-23s %2$8s %3$8s %4$-50s\r\n",
+                sbData.append("@SITE        COUNTRY          LAT     LONG SCS FAMILY\r\n");
+                sbData.append(String.format(" %1$-23s %2$8s %3$8s %4$-50s\r\n",
                         data.getOr("site", defValC).toString(),
                         formatNumStr(8, data.getOr("soillat", defValR).toString()),
                         formatNumStr(8, data.getOr("soillong", defValR).toString()),
                         data.getOr("name", defValC).toString()));
-                br.write("@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE\r\n");
-                br.write(String.format(" %1$-5s %2$5s %3$5s %4$5s %5$5s %6$5s %7$5s %8$-5s %9$-5s %10$-5s\r\n",
+                sbData.append("@ SCOM  SALB  SLU1  SLDR  SLRO  SLNF  SLPF  SMHB  SMPX  SMKE\r\n");
+                sbData.append(String.format(" %1$-5s %2$5s %3$5s %4$5s %5$5s %6$5s %7$5s %8$-5s %9$-5s %10$-5s\r\n",
                         data.getOr("scom", defValC).toString(),
                         formatNumStr(5, data.getOr("salb", defValR).toString()),
                         formatNumStr(5, data.getOr("slu1", defValR).toString()),
@@ -93,7 +94,7 @@ public class DssatSoilOutput extends DssatCommonOutput {
                 ArrayList soilRecords = (ArrayList) data.getOr("SoilLayer", new ArrayList());
 
                 // part one
-                br.write("@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC\r\n");
+                sbData.append("@  SLB  SLMH  SLLL  SDUL  SSAT  SRGF  SSKS  SBDM  SLOC  SLCL  SLSI  SLCF  SLNI  SLHW  SLHB  SCEC  SADC\r\n");
                 // part two
                 for (int i = 0; i < p2Ids.length; i++) {
                     if (!data.getOr(p2Ids[i], "").toString().equals("")) {
@@ -110,7 +111,7 @@ public class DssatSoilOutput extends DssatCommonOutput {
 
                     record = adapter.exportRecord((Map) soilRecords.get(j));
                     // part one
-                    br.write(String.format(" %1$5s %2$-5s %3$5s %4$5s %5$5s %6$5s %7$5s %8$5s %9$5s %10$5s %11$5s %12$5s %13$5s %14$5s %15$5s %16$5s %17$5s\r\n",
+                    sbData.append(String.format(" %1$5s %2$-5s %3$5s %4$5s %5$5s %6$5s %7$5s %8$5s %9$5s %10$5s %11$5s %12$5s %13$5s %14$5s %15$5s %16$5s %17$5s\r\n",
                             formatNumStr(5, record.getOr("sllb", defValR).toString()), //TODO Do I need to check if sllb is a valid value
                             record.getOr("slmh", defValC).toString(),
                             formatNumStr(5, record.getOr("slll", defValR).toString()),
@@ -154,11 +155,13 @@ public class DssatSoilOutput extends DssatCommonOutput {
 
                 // Add part two
                 if (p2Flg) {
-                    br.write(sbLyrP2.toString() + "\r\n");
+                    sbData.append(sbLyrP2.toString() + "\r\n");
                 }
             }
 
             // Output finish
+            br.write(sbError.toString());
+            br.write(sbData.toString());
             br.close();
         } catch (IOException e) {
             // TODO Auto-generated catch block

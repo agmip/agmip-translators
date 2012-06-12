@@ -32,6 +32,7 @@ public class DssatXFileOutput extends DssatCommonOutput {
         JSONAdapter adapter = new JSONAdapter();    // JSON Adapter
         AdvancedHashMap<String, Object> data;       // Data holder for section data
         BufferedWriter br;                          // output object
+        StringBuilder sbData = new StringBuilder();     // construct the data info in the output
         StringBuilder eventPart2;                   // output string for second part of event data
         ArrayList eventRecords;                     // Arraylist for event data holder
         ArrayList secRecords;                       // Arraylist for section data holder
@@ -78,8 +79,9 @@ public class DssatXFileOutput extends DssatCommonOutput {
                 }
                 if (strs != null) {
                     //throw new Exception("Incompleted record because missing data : [" + necessaryData[i] + "]");
-                    System.out.println("Incompleted record because missing data : [" + necessaryData[i] + "]");
-                    return;
+                    //System.out.println("Incompleted record because missing data : [" + necessaryData[i] + "]");
+                    sbError.append("! Warning: Incompleted record because missing data : [" + necessaryData[i] + "]");
+                    //return;
                 }
             }
 
@@ -99,20 +101,20 @@ public class DssatXFileOutput extends DssatCommonOutput {
 
             // Output XFile
             // EXP.DETAILS Section
-            br.write(String.format("*EXP.DETAILS: %1$-10s %2$-60s\r\n", exName, result.getOr("local_name", defValC).toString()));
+            sbData.append(String.format("*EXP.DETAILS: %1$-10s %2$-60s\r\n", exName, result.getOr("local_name", defValC).toString()));
 
             // GENERAL Section
-            br.write("*GENERAL\r\n");
+            sbData.append("*GENERAL\r\n");
             // People
-            br.write(String.format("@PEOPLE\r\n %1$-75s\r\n", result.getOr("people", defValC).toString()));
+            sbData.append(String.format("@PEOPLE\r\n %1$-75s\r\n", result.getOr("people", defValC).toString()));
             // Address
-            br.write(String.format("@ADDRESS\r\n %1$-75s\r\n", result.getOr("address", defValC).toString()));
+            sbData.append(String.format("@ADDRESS\r\n %1$-75s\r\n", result.getOr("address", defValC).toString()));
             // Site
-            br.write(String.format("@SITE\r\n %1$-75s\r\n", result.getOr("site", defValC).toString()));
+            sbData.append(String.format("@SITE\r\n %1$-75s\r\n", result.getOr("site", defValC).toString()));
             // Plot Info
             if (result.containsKey("plot_info")) {
-                br.write("@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........\r\n");
-                br.write(String.format(" %1$6s %2$5s %3$5s %4$5s %5$5s %6$-5s %7$5s %8$5s %9$5s %10$-15s\r\n",
+                sbData.append("@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........\r\n");
+                sbData.append(String.format(" %1$6s %2$5s %3$5s %4$5s %5$5s %6$-5s %7$5s %8$5s %9$5s %10$-15s\r\n",
                         formatNumStr(6, result.getOr("parea", defValR).toString()),
                         formatNumStr(5, result.getOr("prno", defValI).toString()),
                         formatNumStr(5, result.getOr("plen", defValR).toString()),
@@ -130,21 +132,21 @@ public class DssatXFileOutput extends DssatCommonOutput {
 
                 // If notes contain newline code, then write directly
                 if (notes.indexOf("\r") >= 0 || notes.indexOf("\n") >= 0) {
-                    br.write(String.format(" %1$-75s\r\n", result.getOr("notes", defValC).toString()));
+                    sbData.append(String.format(" %1$-75s\r\n", result.getOr("notes", defValC).toString()));
                 } // Otherwise, add newline for every 75-bits charactors
                 else {
                     while (notes.length() > 75) {
-                        br.write(" " + notes.substring(0, 75) + "\r\n");
+                        sbData.append(" " + notes.substring(0, 75) + "\r\n");
                         notes = notes.substring(75);
                     }
-                    br.write(" " + notes + "\r\n");
+                    sbData.append(" " + notes + "\r\n");
                 }
             }
-            br.write("\r\n");
+            sbData.append("\r\n");
 
             // TREATMENT Section
-            br.write("*TREATMENTS                        -------------FACTOR LEVELS------------\r\n");
-            br.write("@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM\r\n");
+            sbData.append("*TREATMENTS                        -------------FACTOR LEVELS------------\r\n");
+            sbData.append("@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM\r\n");
 
             // Get index value for each section // TODO will be add to loop when multiple record come out
             trmnNum = 1;
@@ -169,7 +171,7 @@ public class DssatXFileOutput extends DssatCommonOutput {
 //                data = adapter.exportRecord((Map) secRecords.get(i));
 
                 // treatment
-                br.write(String.format("%1$2s %2$1s %3$1s %4$1s %5$-25s %6$2s %7$2s %8$2s %9$2s %10$2s %11$2s %12$2s %13$2s %14$2s %15$2s %16$2s %17$2s %18$2s\r\n",
+                sbData.append(String.format("%1$2s %2$1s %3$1s %4$1s %5$-25s %6$2s %7$2s %8$2s %9$2s %10$2s %11$2s %12$2s %13$2s %14$2s %15$2s %16$2s %17$2s %18$2s\r\n",
                         trmnNum,
                         1, //data.getOr("sq", defValI).toString(),
                         0, //data.getOr("op", defValI).toString(),
@@ -190,31 +192,34 @@ public class DssatXFileOutput extends DssatCommonOutput {
                         smNum)); // 1
                 trmnNum++;
             }
-            br.write("\r\n");
+            sbData.append("\r\n");
 
             // Check if Necessary Section exists
             if (cuArr.isEmpty()) {
                 //throw new Exception ("");
-                System.out.println("Trhee is no cultivar data in the experiment.");
+                //System.out.println("Trhee is no cultivar data in the experiment.");
+                sbError.append("! Warning: Trhee is no cultivar data in the experiment.");
             } else if (flArr.isEmpty()) {
                 //throw new Exception ("");
-                System.out.println("Trhee is no field data in the experiment.");
+                //System.out.println("Trhee is no field data in the experiment.");
+                sbError.append("! Warning: Trhee is no field data in the experiment.");
             } else if (mpArr.isEmpty()) {
                 //throw new Exception ("");
-                System.out.println("Trhee is no plainting data in the experiment.");
+                //System.out.println("Trhee is no plainting data in the experiment.");
+                sbError.append("! Warning: Trhee is no plainting data in the experiment.");
             }
 
             // CULTIVARS Section
             for (int idx = 0; idx < cuArr.size(); idx++) {
                 //if (!cuArr.isEmpty()) {
-                br.write("*CULTIVARS\r\n");
-                br.write("@C CR INGENO CNAME\r\n");
+                sbData.append("*CULTIVARS\r\n");
+                sbData.append("@C CR INGENO CNAME\r\n");
 
                 //            secRecords = (ArrayList) result.getOr("cultivars", new ArrayList());
                 //            for (int i = 0; i < secRecords.size(); i++)
                 {
                     //                data = adapter.exportRecord((Map) secRecords.get(i));
-                    br.write(String.format("%1$2s %2$-2s %3$-6s %4$-16s\r\n",
+                    sbData.append(String.format("%1$2s %2$-2s %3$-6s %4$-16s\r\n",
                             idx + 1, //data.getOr("ge", defValI).toString(),
                             data.getOr("cr", defValC).toString(),
                             data.getOr("cul_id", defValC).toString(),
@@ -222,13 +227,13 @@ public class DssatXFileOutput extends DssatCommonOutput {
 
                 }
             }
-            br.write("\r\n");
+            sbData.append("\r\n");
 
             // FIELDS Section
             for (int idx = 0; idx < flArr.size(); idx++) {
                 //if (!flArr.isEmpty()) {
-                br.write("*FIELDS\r\n");
-                br.write("@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME\r\n");
+                sbData.append("*FIELDS\r\n");
+                sbData.append("@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME\r\n");
                 eventPart2 = new StringBuilder();
                 eventPart2.append("@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR\r\n");
 
@@ -236,7 +241,7 @@ public class DssatXFileOutput extends DssatCommonOutput {
                 //            for (int i = 0; i < secRecords.size(); i++)
                 {
                     //                data = adapter.exportRecord((Map) secRecords.get(i));
-                    br.write(String.format("%1$2s %2$-8s %3$-8s %4$-5s %5$5s %6$-5s %7$5s %8$5s %9$-5s %10$-5s %11$5s %12$-10s %13$s\r\n",
+                    sbData.append(String.format("%1$2s %2$-8s %3$-8s %4$-5s %5$5s %6$-5s %7$5s %8$5s %9$-5s %10$-5s %11$5s %12$-10s %13$s\r\n",
                             idx + 1, //data.getOr("fl", defValI).toString(),
                             data.getOr("id_field", defValC).toString(),
                             data.getOr("wst_insi", defValC).toString(),
@@ -263,21 +268,21 @@ public class DssatXFileOutput extends DssatCommonOutput {
                             data.getOr("flhst", defValC).toString(),
                             formatNumStr(5, data.getOr("fhdur", defValR).toString())));
                 }
-                br.write(eventPart2.toString() + "\r\n");
+                sbData.append(eventPart2.toString() + "\r\n");
             }
 
             // SOIL ANALYSIS Section
             for (int idx = 0; idx < saArr.size(); idx++) {
                 //if (!saArr.isEmpty()) {
-                br.write("*SOIL ANALYSIS\r\n");
+                sbData.append("*SOIL ANALYSIS\r\n");
 
                 //            secRecords = (ArrayList) result.getOr("soil analysis", new ArrayList());
                 //            for (int i = 0; i < secRecords.size(); i++)
                 {
                     //                data = adapter.exportRecord((Map) secRecords.get(i));
 
-                    br.write("@A SADAT  SMHB  SMPX  SMKE  SANAME\r\n");
-                    br.write(String.format("%1$2s %2$5s %3$-5s %4$-5s %5$-5s  %6$s\r\n",
+                    sbData.append("@A SADAT  SMHB  SMPX  SMKE  SANAME\r\n");
+                    sbData.append(String.format("%1$2s %2$5s %3$-5s %4$-5s %5$-5s  %6$s\r\n",
                             idx + 1, //data.getOr("sa", defValI).toString(),
                             formatDateStr(data.getOr("sadat", defValD).toString()),
                             data.getOr("samhb", defValC).toString(),
@@ -285,12 +290,12 @@ public class DssatXFileOutput extends DssatCommonOutput {
                             data.getOr("samke", defValC).toString(),
                             data.getOr("sa_name", defValC).toString()));
 
-                    br.write("@A  SABL  SADM  SAOC  SANI SAPHW SAPHB  SAPX  SAKE  SASC\r\n");
+                    sbData.append("@A  SABL  SADM  SAOC  SANI SAPHW SAPHB  SAPX  SAKE  SASC\r\n");
                     //                secRecords = (ArrayList) data.getOr("soil analysis levels", new ArrayList());
                     //                for (int j = 0; j < secRecords.size(); j++)
                     {
                         //                    data = adapter.exportRecord((Map) secRecords.get(j));
-                        br.write(String.format("%1$2s %2$5s %3$5s %4$5s %5$5s %6$5s %7$5s %8$5s %9$5s %10$5s\r\n",
+                        sbData.append(String.format("%1$2s %2$5s %3$5s %4$5s %5$5s %6$5s %7$5s %8$5s %9$5s %10$5s\r\n",
                                 idx + 1, //data.getOr("sa", defValI).toString(),
                                 formatNumStr(5, data.getOr("sabl", defValR).toString()),
                                 formatNumStr(5, data.getOr("sabdm", defValR).toString()),
@@ -303,20 +308,20 @@ public class DssatXFileOutput extends DssatCommonOutput {
                                 formatNumStr(5, data.getOr("sasc", defValR).toString())));
                     }
                 }
-                br.write("\r\n");
+                sbData.append("\r\n");
             }
 
             // INITIAL CONDITIONS Section
             for (int idx = 0; idx < icArr.size(); idx++) {
                 //if (!icArr.isEmpty()) {
-                br.write("*INITIAL CONDITIONS\r\n");
+                sbData.append("*INITIAL CONDITIONS\r\n");
 
                 //            eventRecords = (ArrayList) data.getOr("initial", new ArrayList());
                 //            for (int i = 0; i < eventRecords.size(); i++)
                 {
                     //                data = adapter.exportRecord((Map) eventRecords.get(i));
-                    br.write("@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME\r\n");
-                    br.write(String.format("%1$2s %2$-5s %3$5s %4$5s %5$5s %6$5s %7$5s %8$5s %9$5s %10$5s %11$5s %12$5s %13$5s %14$s\r\n",
+                    sbData.append("@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME\r\n");
+                    sbData.append(String.format("%1$2s %2$-5s %3$5s %4$5s %5$5s %6$5s %7$5s %8$5s %9$5s %10$5s %11$5s %12$5s %13$5s %14$s\r\n",
                             idx + 1, //data.getOr("ic", defValI).toString(),
                             data.getOr("icpcr", defValC).toString(),
                             formatDateStr(data.getOr("icdat", defValD).toString()),
@@ -332,12 +337,12 @@ public class DssatXFileOutput extends DssatCommonOutput {
                             formatNumStr(5, data.getOr("icrdp", defValR).toString()),
                             data.getOr("ic_name", defValC).toString()));
 
-                    br.write("@C  ICBL  SH2O  SNH4  SNO3\r\n");
+                    sbData.append("@C  ICBL  SH2O  SNH4  SNO3\r\n");
                     //                secRecords = (ArrayList) data.getOr("initial levels", new ArrayList());
                     //                for (int j = 0; j < secRecords.size(); j++)
                     {
                         //                    data = adapter.exportRecord((Map) secRecords.get(j));
-                        br.write(String.format("%1$2s %2$5s %3$5s %4$5s %5$5s\r\n",
+                        sbData.append(String.format("%1$2s %2$5s %3$5s %4$5s %5$5s\r\n",
                                 idx + 1, //data.getOr("ic", defValI).toString(),
                                 formatNumStr(5, data.getOr("icbl", defValR).toString()),
                                 formatNumStr(5, data.getOr("ich2o", defValR).toString()),
@@ -346,20 +351,20 @@ public class DssatXFileOutput extends DssatCommonOutput {
 
                     }
                 }
-                br.write("\r\n");
+                sbData.append("\r\n");
             }
 
             // PLANTING DETAILS Section
             for (int idx = 0; idx < mpArr.size(); idx++) {
                 //if (!mpArr.isEmpty()) {
-                br.write("*PLANTING DETAILS\r\n");
-                br.write("@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME\r\n");
+                sbData.append("*PLANTING DETAILS\r\n");
+                sbData.append("@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME\r\n");
 
                 //            eventRecords = (ArrayList) data.getOr("plainting", new ArrayList());
                 //            for (int i = 0; i < eventRecords.size(); i++)
                 {
                     //                data = adapter.exportRecord((Map) eventRecords.get(i));
-                    br.write(String.format("%1$2s %2$5s %3$5s %4$5s %5$5s     %6$-1s     %7$-1s %8$5s %9$5s %10$5s %11$5s %12$5s %13$5s %14$5s %15$5s                        %16$s\r\n",
+                    sbData.append(String.format("%1$2s %2$5s %3$5s %4$5s %5$5s     %6$-1s     %7$-1s %8$5s %9$5s %10$5s %11$5s %12$5s %13$5s %14$5s %15$5s                        %16$s\r\n",
                             idx + 1, //data.getOr("pl", defValI).toString(),
                             formatDateStr(data.getOr("pdate", defValD).toString()),
                             formatDateStr(data.getOr("pldae", defValD).toString()),
@@ -378,20 +383,20 @@ public class DssatXFileOutput extends DssatCommonOutput {
                             data.getOr("pl_name", defValC).toString()));
 
                 }
-                br.write("\r\n");
+                sbData.append("\r\n");
             }
 
             // IRRIGATION AND WATER MANAGEMENT Section
             for (int idx = 0; idx < miArr.size(); idx++) {
                 //if (!miArr.isEmpty()) {
-                br.write("*IRRIGATION AND WATER MANAGEMENT\r\n");
+                sbData.append("*IRRIGATION AND WATER MANAGEMENT\r\n");
 
                 //            eventRecords = (ArrayList) data.getOr("irrigation", new ArrayList());
                 //            for (int i = 0; i < eventRecords.size(); i++)
                 {
                     //                data = adapter.exportRecord((Map) eventRecords.get(i));
-                    br.write("@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME\r\n");
-                    br.write(String.format("%1$2s %2$5s %3$5s %4$5s %5$5s %6$-5s %7$-5s %8$5s %9$s\r\n",
+                    sbData.append("@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME\r\n");
+                    sbData.append(String.format("%1$2s %2$5s %3$5s %4$5s %5$5s %6$-5s %7$-5s %8$5s %9$s\r\n",
                             idx + 1, //data.getOr("ir", defValI).toString(),
                             formatNumStr(5, data.getOr("ireff", defValR).toString()),
                             formatNumStr(5, data.getOr("irmdp", defValR).toString()),
@@ -402,31 +407,31 @@ public class DssatXFileOutput extends DssatCommonOutput {
                             formatNumStr(5, data.getOr("iamt", defValR).toString()),
                             data.getOr("ir_name", defValC).toString()));
 
-                    br.write("@I IDATE  IROP IRVAL\r\n");
+                    sbData.append("@I IDATE  IROP IRVAL\r\n");
                     //                secRecords = (ArrayList) data.getOr("irrigation levels", new ArrayList());
                     //                for (int j = 0; j < secRecords.size(); j++)
                     {
                         //                    data = adapter.exportRecord((Map) secRecords.get(j));
-                        br.write(String.format("%1$2s %2$5s %3$-5s %4$5s\r\n",
+                        sbData.append(String.format("%1$2s %2$5s %3$-5s %4$5s\r\n",
                                 idx + 1, //data.getOr("ir", defValI).toString(),
                                 formatDateStr(data.getOr("idate", defValD).toString()),
                                 data.getOr("irop", defValC).toString(),
                                 formatNumStr(5, data.getOr("irval", defValR).toString())));
                     }
                 }
-                br.write("\r\n");
+                sbData.append("\r\n");
             }
 
             // FERTILIZERS (INORGANIC) Section
             for (int idx = 0; idx < mfArr.size(); idx++) {
                 //if (!mfArr.isEmpty()) {
-                br.write("*FERTILIZERS (INORGANIC)\r\n");
-                br.write("@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME\r\n");
+                sbData.append("*FERTILIZERS (INORGANIC)\r\n");
+                sbData.append("@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME\r\n");
                 //            eventRecords = (ArrayList) data.getOr("fertilizers", new ArrayList());
                 //            for (int i = 0; i < eventRecords.size(); i++)
                 {
                     //                data = adapter.exportRecord((Map) eventRecords.get(i));
-                    br.write(String.format("%1$2s %2$5s %3$-5s %4$-5s %5$5s %6$5s %7$5s %8$5s %9$5s %10$5s %11$-5s %12$s\r\n",
+                    sbData.append(String.format("%1$2s %2$5s %3$-5s %4$-5s %5$5s %6$5s %7$5s %8$5s %9$5s %10$5s %11$-5s %12$s\r\n",
                             idx + 1, //data.getOr("fe", defValI).toString(),
                             formatDateStr(data.getOr("fdate", defValD).toString()),
                             data.getOr("fecd", defValC).toString(),
@@ -441,20 +446,20 @@ public class DssatXFileOutput extends DssatCommonOutput {
                             data.getOr("fe_name", defValC).toString()));
 
                 }
-                br.write("\r\n");
+                sbData.append("\r\n");
             }
 
             // RESIDUES AND ORGANIC FERTILIZER Section
             for (int idx = 0; idx < mrArr.size(); idx++) {
                 //if (!mrArr.isEmpty()) {
-                br.write("*RESIDUES AND ORGANIC FERTILIZER\r\n");
-                br.write("@R RDATE  RCOD  RAMT  RESN  RESP  RESK  RINP  RDEP  RMET RENAME\r\n");
+                sbData.append("*RESIDUES AND ORGANIC FERTILIZER\r\n");
+                sbData.append("@R RDATE  RCOD  RAMT  RESN  RESP  RESK  RINP  RDEP  RMET RENAME\r\n");
 
                 //            eventRecords = (ArrayList) data.getOr("residues", new ArrayList());
                 //            for (int i = 0; i < eventRecords.size(); i++)
                 {
                     //                data = adapter.exportRecord((Map) eventRecords.get(i));
-                    br.write(String.format("%1$2s %2$5s %3$-5s %4$5s %5$5s %6$5s %7$5s %8$5s %9$5s %10$5s %11$s\r\n",
+                    sbData.append(String.format("%1$2s %2$5s %3$-5s %4$5s %5$5s %6$5s %7$5s %8$5s %9$5s %10$5s %11$s\r\n",
                             idx + 1, //data.getOr("om", defValI).toString(),
                             formatDateStr(data.getOr("omdat", defValD).toString()),
                             data.getOr("omcd", defValC).toString(),
@@ -468,20 +473,20 @@ public class DssatXFileOutput extends DssatCommonOutput {
                             data.getOr("om_name", defValC).toString()));
 
                 }
-                br.write("\r\n");
+                sbData.append("\r\n");
             }
 
             // CHEMICAL APPLICATIONS Section
             for (int idx = 0; idx < mcArr.size(); idx++) {
                 //if (!mcArr.isEmpty()) {
-                br.write("*CHEMICAL APPLICATIONS\r\n");
-                br.write("@C CDATE CHCOD CHAMT  CHME CHDEP   CHT..CHNAME\r\n");
+                sbData.append("*CHEMICAL APPLICATIONS\r\n");
+                sbData.append("@C CDATE CHCOD CHAMT  CHME CHDEP   CHT..CHNAME\r\n");
 
                 //            eventRecords = (ArrayList) data.getOr("chemical", new ArrayList());
                 //            for (int i = 0; i < eventRecords.size(); i++)
                 {
                     //                data = adapter.exportRecord((Map) eventRecords.get(i));
-                    br.write(String.format("%1$2s %2$5s %3$-5s %4$5s %5$-5s %6$-5s %7$-5s  %8$s\r\n",
+                    sbData.append(String.format("%1$2s %2$5s %3$-5s %4$5s %5$-5s %6$-5s %7$-5s  %8$s\r\n",
                             idx + 1, //data.getOr("ch", defValI).toString(),
                             formatDateStr(data.getOr("cdate", defValD).toString()),
                             data.getOr("chcd", defValC).toString(),
@@ -492,20 +497,20 @@ public class DssatXFileOutput extends DssatCommonOutput {
                             data.getOr("ch_name", defValC).toString()));
 
                 }
-                br.write("\r\n");
+                sbData.append("\r\n");
             }
 
             // TILLAGE Section
             for (int idx = 0; idx < mtArr.size(); idx++) {
                 //if (!mtArr.isEmpty()) {
-                br.write("*TILLAGE\r\n");
-                br.write("@T TDATE TIMPL  TDEP TNAME\r\n");
+                sbData.append("*TILLAGE\r\n");
+                sbData.append("@T TDATE TIMPL  TDEP TNAME\r\n");
 
                 //            eventRecords = (ArrayList) data.getOr("tillage", new ArrayList());
                 //            for (int i = 0; i < eventRecords.size(); i++)
                 {
                     //                data = adapter.exportRecord((Map) eventRecords.get(i));
-                    br.write(String.format("%1$2s %2$5s %3$-5s %4$5s %5$s\r\n",
+                    sbData.append(String.format("%1$2s %2$5s %3$-5s %4$5s %5$s\r\n",
                             idx + 1, //data.getOr("ti", defValI).toString(),
                             formatDateStr(data.getOr("tdate", defValD).toString()),
                             data.getOr("tiimp", defValC).toString(),
@@ -513,20 +518,20 @@ public class DssatXFileOutput extends DssatCommonOutput {
                             data.getOr("ti_name", defValC).toString()));
 
                 }
-                br.write("\r\n");
+                sbData.append("\r\n");
             }
 
             // ENVIRONMENT MODIFICATIONS Section
             for (int idx = 0; idx < meArr.size(); idx++) {
                 //if (!meArr.isEmpty()) {
-                br.write("*ENVIRONMENT MODIFICATIONS\r\n");
-                br.write("@E ODATE EDAY  ERAD  EMAX  EMIN  ERAIN ECO2  EDEW  EWIND ENVNAME\r\n");
+                sbData.append("*ENVIRONMENT MODIFICATIONS\r\n");
+                sbData.append("@E ODATE EDAY  ERAD  EMAX  EMIN  ERAIN ECO2  EDEW  EWIND ENVNAME\r\n");
 
                 //            eventRecords = (ArrayList) data.getOr("environment", new ArrayList());
                 //            for (int i = 0; i < eventRecords.size(); i++)
                 {
                     //                data = adapter.exportRecord((Map) eventRecords.get(i));
-                    br.write(String.format("%1$2s %2$5s %3$-1s%4$4s %5$-1s%6$4s %7$-1s%8$4s %9$-1s%10$4s %11$-1s%12$4s %13$-1s%14$4s %15$-1s%16$4s %17$-1s%18$4s %19$s\r\n",
+                    sbData.append(String.format("%1$2s %2$5s %3$-1s%4$4s %5$-1s%6$4s %7$-1s%8$4s %9$-1s%10$4s %11$-1s%12$4s %13$-1s%14$4s %15$-1s%16$4s %17$-1s%18$4s %19$s\r\n",
                             idx + 1, //data.getOr("em", defValI).toString(),
                             formatDateStr(data.getOr("emday", defValD).toString()),
                             data.getOr("ecdyl", defValC).toString(),
@@ -548,20 +553,20 @@ public class DssatXFileOutput extends DssatCommonOutput {
                             data.getOr("em_name", defValC).toString()));
 
                 }
-                br.write("\r\n");
+                sbData.append("\r\n");
             }
 
             // HARVEST DETAILS Section
             for (int idx = 0; idx < mhArr.size(); idx++) {
                 //if (!mhArr.isEmpty()) {
-                br.write("*HARVEST DETAILS\r\n");
-                br.write("@H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME\r\n");
+                sbData.append("*HARVEST DETAILS\r\n");
+                sbData.append("@H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME\r\n");
 
                 //            eventRecords = (ArrayList) data.getOr("harvest", new ArrayList());
                 //            for (int i = 0; i < eventRecords.size(); i++)
                 {
                     //                data = adapter.exportRecord((Map) eventRecords.get(i));
-                    br.write(String.format("%1$2s %2$5s %3$-5s %4$-5s %5$-5s %6$5s %7$5s %8$s\r\n",
+                    sbData.append(String.format("%1$2s %2$5s %3$-5s %4$-5s %5$-5s %6$5s %7$5s %8$s\r\n",
                             idx + 1, //data.getOr("ha", defValI).toString(),
                             formatDateStr(data.getOr("hdate", defValD).toString()),
                             data.getOr("hastg", defValC).toString(),
@@ -572,13 +577,15 @@ public class DssatXFileOutput extends DssatCommonOutput {
                             data.getOr("ha_name", defValC).toString()));
 
                 }
-                br.write("\r\n");
+                sbData.append("\r\n");
             }
 
             // SIMULATION CONTROLS and AUTOMATIC MANAGEMENT Section
-            br.write(createSMMAStr(0, result));
+            sbData.append(createSMMAStr(0, result));
 
             // Output finish
+            sbData.append(sbError.toString());
+            sbData.append(sbData.toString());
             br.close();
         } catch (IOException e) {
             // TODO Auto-generated catch block
