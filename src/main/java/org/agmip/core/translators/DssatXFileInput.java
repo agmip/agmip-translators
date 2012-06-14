@@ -46,6 +46,7 @@ public class DssatXFileInput extends DssatCommonInput {
                 if (flg[0].startsWith("exp.details:") && flg[2].equals("")) {
                     // TODO
                     ret.put("exname", line.substring(14, 24).trim());
+                    ret.put("institutes", line.substring(14, 16));
                 } // Read General Section
                 else if (flg[0].startsWith("general")) {
                     if (flg[1].equals("people") && flg[2].equals("data")) {
@@ -56,7 +57,9 @@ public class DssatXFileInput extends DssatCommonInput {
                         ret.put("fl_loc_1", "");
                         ret.put("fl_loc_2", "");
                         ret.put("fl_loc_3", "");
-                        ret.put("institutes", "");
+                        if (!line.trim().equals("")) {
+                            ret.put("institutes", line.trim());
+                        }
                         switch (addr.length) {
                             case 0:
                                 break;
@@ -72,21 +75,14 @@ public class DssatXFileInput extends DssatCommonInput {
                                 ret.put("fl_loc_2", addr[1]);
                                 ret.put("fl_loc_3", addr[0]);
                                 break;
-                            case 4:
-                                ret.put("fl_loc_1", addr[3]);
-                                ret.put("fl_loc_2", addr[2]);
-                                ret.put("fl_loc_3", addr[1]);
-                                ret.put("institutes", addr[0]);
-                                break;
                             default:
                                 ret.put("fl_loc_1", addr[addr.length - 1]);
                                 ret.put("fl_loc_2", addr[addr.length - 2]);
-                                ret.put("fl_loc_3", addr[addr.length - 3]);
-                                String inst = "";
-                                for (int i = 0; i < addr.length - 3; i++) {
-                                    inst += addr[i] + ", ";
+                                String loc3 = "";
+                                for (int i = 0; i < addr.length - 2; i++) {
+                                    loc3 += addr[i] + ", ";
                                 }
-                                ret.put("institutes", inst.substring(0, inst.length() - 3));
+                                ret.put("fl_loc_3", loc3.substring(0, loc3.length() - 2));
                         }
                     } else if ((flg[1].equals("site") || flg[1].equals("sites")) && flg[2].equals("data")) {
                         //$ret[$flg[0]]["site"] = trim($line);
