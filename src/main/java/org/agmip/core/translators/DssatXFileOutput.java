@@ -101,16 +101,20 @@ public class DssatXFileOutput extends DssatCommonOutput {
 
             // Output XFile
             // EXP.DETAILS Section
-            sbData.append(String.format("*EXP.DETAILS: %1$-10s %2$-60s\r\n", exName, result.getOr("local_name", defValC).toString()));
+            sbData.append(String.format("*EXP.DETAILS: %1$-10s %2$s\r\n\r\n", exName, result.getOr("local_name", defValC).toString()));
 
             // GENERAL Section
             sbData.append("*GENERAL\r\n");
             // People
-            sbData.append(String.format("@PEOPLE\r\n %1$-75s\r\n", result.getOr("people", defValC).toString()));
+            sbData.append(String.format("@PEOPLE\r\n %1$s\r\n", result.getOr("people", defValC).toString()));
             // Address
-            sbData.append(String.format("@ADDRESS\r\n %1$-75s\r\n", result.getOr("address", defValC).toString()));
+            //sbData.append(String.format("@ADDRESS\r\n %1$-75s\r\n", result.getOr("address", defValC).toString())); //TODO
+            sbData.append(String.format("@ADDRESS\r\n %3$s, %2$s, %1$s\r\n",
+                    result.getOr("fl_loc_1", defValC).toString(),
+                    result.getOr("fl_loc_2", defValC).toString(),
+                    result.getOr("fl_loc_3", defValC).toString()));
             // Site
-            sbData.append(String.format("@SITE\r\n %1$-75s\r\n", result.getOr("site", defValC).toString()));
+            sbData.append(String.format("@SITE\r\n %1$s\r\n", result.getOr("site", defValC).toString()));
             // Plot Info
             if (result.containsKey("plot_info")) {
                 sbData.append("@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........\r\n");
@@ -584,8 +588,8 @@ public class DssatXFileOutput extends DssatCommonOutput {
             sbData.append(createSMMAStr(0, result));
 
             // Output finish
-            sbData.append(sbError.toString());
-            sbData.append(sbData.toString());
+            br.write(sbError.toString());
+            br.write(sbData.toString());
             br.close();
         } catch (IOException e) {
             // TODO Auto-generated catch block
