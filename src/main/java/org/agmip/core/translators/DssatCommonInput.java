@@ -13,6 +13,56 @@ import org.agmip.core.types.TranslatorInput;
  */
 public abstract class DssatCommonInput implements TranslatorInput {
 
+    protected String[] flg = new String[3];
+
+    /**
+     * Set reading flgs for reading lines
+     * 
+     * @param line  the string of reading line
+     */
+    protected void judgeContentType(String line) {
+        // Section Title line
+        if (line.startsWith("*")) {
+
+            setTitleFlgs(line);
+
+        } // Data title line
+        else if (line.startsWith("@")) {
+
+            flg[1] = line.substring(1).trim().toLowerCase();
+            flg[2] = "";
+
+        } // Comment line
+        else if (line.startsWith("!")) {
+
+            flg[2] = "comment";
+
+        } // Data line
+        else if (!line.trim().equals("")) {
+
+            flg[2] = "data";
+
+        } // Continued blank line
+        else if (flg[2].equals("blank")) {
+
+            flg[1] = "";
+            flg[2] = "blank";
+
+        } else {
+
+            flg[0] = "";
+            flg[1] = "";
+            flg[2] = "blank";
+        }
+    }
+
+    /**
+     * Set reading flgs for title lines
+     * 
+     * @param line  the string of reading line
+     */
+    protected abstract void setTitleFlgs(String line);
+
     /**
      * Translate data str from "yyddd" to "yyyymmdd"
      *
@@ -23,7 +73,7 @@ public abstract class DssatCommonInput implements TranslatorInput {
 
         return translateDateStr(str, "0");
     }
-    
+
     /**
      * Translate data str from "yyddd" to "yyyymmdd" plus days you want
      *
@@ -37,7 +87,7 @@ public abstract class DssatCommonInput implements TranslatorInput {
         Calendar cal = Calendar.getInstance();
         int days;
         int year;
-        if (startDate.length() > 5 || startDate.length() < 4 ) {
+        if (startDate.length() > 5 || startDate.length() < 4) {
             //throw new Exception("");
             return "-99"; //defValD;
         }
@@ -59,7 +109,7 @@ public abstract class DssatCommonInput implements TranslatorInput {
         }
 
     }
-    
+
     /**
      * Divide the data in the line into a map
      *
@@ -68,10 +118,10 @@ public abstract class DssatCommonInput implements TranslatorInput {
      * @return the map contains divided data with keys from original string
      */
     protected AdvancedHashMap readLine(String line, LinkedHashMap<String, Integer> formats) {
-        
+
         AdvancedHashMap ret = new AdvancedHashMap();
         int length;
-         
+
         for (String key : formats.keySet()) {
             length = (Integer) formats.get(key);
             if (length <= line.length()) {
@@ -82,7 +132,7 @@ public abstract class DssatCommonInput implements TranslatorInput {
                 line = "";
             }
         }
-        
+
         return ret;
     }
 
@@ -94,7 +144,7 @@ public abstract class DssatCommonInput implements TranslatorInput {
     protected String getExName() {
 
         String ret = "";
-        
+
         return ret;
     }
 }
