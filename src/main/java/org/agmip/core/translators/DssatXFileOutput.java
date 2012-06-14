@@ -109,10 +109,11 @@ public class DssatXFileOutput extends DssatCommonOutput {
             sbData.append(String.format("@PEOPLE\r\n %1$s\r\n", result.getOr("people", defValC).toString()));
             // Address
             //sbData.append(String.format("@ADDRESS\r\n %1$-75s\r\n", result.getOr("address", defValC).toString())); //TODO
-            sbData.append(String.format("@ADDRESS\r\n %3$s, %2$s, %1$s\r\n",
+            sbData.append(String.format("@ADDRESS\r\n %4$s, %3$s, %2$s, %1$s\r\n",
                     result.getOr("fl_loc_1", defValC).toString(),
                     result.getOr("fl_loc_2", defValC).toString(),
-                    result.getOr("fl_loc_3", defValC).toString()));
+                    result.getOr("fl_loc_3", defValC).toString(),
+                    result.getOr("institutes", defValC).toString())); // TODO wait for confirm
             // Site
             sbData.append(String.format("@SITE\r\n %1$s\r\n", result.getOr("site", defValC).toString()));
             // Plot Info
