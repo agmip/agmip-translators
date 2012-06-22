@@ -17,11 +17,11 @@ import org.junit.Test;
  */
 public class DssatWeatherTest {
     
-    DssatWeather obDssatWeather;
+    DssatWeatherOutput obDssatWeather;
     
     @Before
     public void setUp() throws Exception {
-        obDssatWeather = new DssatWeather();
+        obDssatWeather = new DssatWeatherOutput();
     }
 
     @Test

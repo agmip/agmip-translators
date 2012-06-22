@@ -17,11 +17,11 @@ import org.junit.Test;
  */
 public class DssatAFileTest {
     
-    DssatAFile obDssatAFile;
+    DssatAFileOutput obDssatAFile;
     
     @Before
     public void setUp() throws Exception {
-        obDssatAFile = new DssatAFile();
+        obDssatAFile = new DssatAFileOutput();
     }
 
     @Test
